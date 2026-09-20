@@ -64,18 +64,14 @@
       font-style: italic;
     }
   </style>
-
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
-
   <div class="card">
     <h2>🔑 KEY CỦA BẠN</h2>
     <p>Xác thực thành công qua Link4m</p>
-
     <div id="status">⏳ Đang kiểm tra hệ thống...</div>
-
     <div id="key-section" style="display: none;">
       <div class="key-box" id="generatedKey">meizulover_XXXXXXXXX</div>
       <button class="btn-copy" id="btnCopy" onclick="copyKey()">SAO CHÉP KEY</button>
@@ -84,7 +80,8 @@
   </div>
 
   <script>
-    const firebaseConfig = {
+    // ===== CẤU HÌNH FIREBASE =====
+    var firebaseConfig = {
       apiKey: "AIzaSyAhHdsZw5xwq_hmtU_oe9ELSgEw6L6pxvY",
       authDomain: "ogekeyl4m.firebaseapp.com",
       databaseURL: "https://ogekeyl4m-default-rtdb.asia-southeast1.firebasedatabase.app/",
@@ -97,66 +94,40 @@
 
     function updateStatus(msg, isError) {
       var el = document.getElementById('status');
+      el.style.display = 'block';
       el.innerText = msg;
-      if (isError) el.style.color = '#dc3545';
+      el.style.color = isError ? '#dc3545' : '#fd7e14';
     }
 
-    // Chỉ cho vào khi có ?from=link4m (do link4m redirect tới)
-    var urlParams = new URLSearchParams(window.location.search);
-    var fromSource = urlParams.get('from');
+    // Chấp nhận cả: ?from=link4m  |  ?link4m  |  ?link4m=1
+    function isFromLink4m() {
+      var p = new URLSearchParams(window.location.search);
+      var from = (p.get('from') || '').toLowerCase();
+      if (from === 'link4m') return true;
+      if (p.has('link4m')) return true;
+      return false;
+    }
 
-    if (!fromSource || fromSource.toLowerCase() !== 'link4m') {
-      updateStatus("❌ LỖI: Truy cập bị từ chối! Bạn phải vượt link qua Link4m để lấy Key.", true);
-    } else {
-      // Xóa ?from=link4m trên thanh địa chỉ
-      window.history.replaceState({}, document.title, window.location.pathname);
-
-      try {
-        firebase.initializeApp(firebaseConfig);
-        var database = firebase.database();
-
-        function generateMeizuKey(length) {
-          length = length || 9;
-          var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-          var result = '';
-          for (var i = 0; i < length; i++) {
-            result += chars.charAt(Math.floor(Math.random() * chars.length));
-          }
-          return 'meizulover_' + result;
-        }
-
-        var newKey = generateMeizuKey();
-        updateStatus("⏳ Đang tạo Key kích hoạt...");
-
-        // ===== QUAN TRỌNG: ghi ở GỐC database (không dùng nhánh keys/) =====
-        // App Android đọc:  /{key}.json
-        // Nên phải ghi:     ref(newKey)  chứ không phải ref('keys/' + newKey)
-        database.ref(newKey).set(true)
-          .then(function () {
-            document.getElementById('status').style.display = 'none';
-            document.getElementById('generatedKey').innerText = newKey;
-            document.getElementById('key-section').style.display = 'block';
-          })
-          .catch(function (error) {
-            updateStatus('❌ Lỗi ghi Firebase: ' + error.message, true);
-          });
-
-      } catch (e) {
-        updateStatus("❌ Lỗi kết nối: " + e.message, true);
+    function generateMeizuKey(length) {
+      length = length || 9;
+      var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      var result = '';
+      for (var i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
       }
+      return 'meizulover_' + result;
     }
 
     function copyKey() {
       var keyText = document.getElementById('generatedKey').innerText;
       var btnCopy = document.getElementById('btnCopy');
-
       if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(keyText).then(function () {
-          btnCopy.innerText = "✅ ĐÃ SAO CHÉP!";
-          btnCopy.style.background = "#28a745";
+          btnCopy.innerText = '✅ ĐÃ SAO CHÉP!';
+          btnCopy.style.background = '#28a745';
           setTimeout(function () {
-            btnCopy.innerText = "SAO CHÉP KEY";
-            btnCopy.style.background = "#007bff";
+            btnCopy.innerText = 'SAO CHÉP KEY';
+            btnCopy.style.background = '#007bff';
           }, 2000);
         }).catch(function () { fallbackCopy(keyText); });
       } else {
@@ -165,17 +136,51 @@
     }
 
     function fallbackCopy(text) {
-      var textArea = document.createElement("textarea");
-      textArea.value = text;
-      document.body.appendChild(textArea);
-      textArea.select();
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
       try {
         document.execCommand('copy');
         alert('✅ Đã sao chép Key: ' + text);
       } catch (err) {
         alert('Key của bạn là: ' + text);
       }
-      document.body.removeChild(textArea);
+      document.body.removeChild(ta);
+    }
+
+    // ===== MAIN =====
+    if (!isFromLink4m()) {
+      updateStatus('❌ LỖI: Truy cập bị từ chối! Bạn phải vượt link qua Link4m để lấy Key.', true);
+    } else {
+      // Xóa query trên thanh địa chỉ (giữ path)
+      try {
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } catch (e) {}
+
+      try {
+        if (!firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
+        }
+        var database = firebase.database();
+        var newKey = generateMeizuKey();
+
+        updateStatus('⏳ Đang tạo Key kích hoạt...');
+
+        // Ghi đúng nhánh /keys/ (khớp app Android + database hiện tại)
+        database.ref('keys/' + newKey).set({
+          created_at: new Date().toISOString(),
+          used: false
+        }).then(function () {
+          document.getElementById('status').style.display = 'none';
+          document.getElementById('generatedKey').innerText = newKey;
+          document.getElementById('key-section').style.display = 'block';
+        }).catch(function (error) {
+          updateStatus('❌ Lỗi ghi Firebase: ' + error.message + '\n(Kiểm tra Rules: keys phải cho phép write)', true);
+        });
+      } catch (e) {
+        updateStatus('❌ Lỗi kết nối: ' + e.message, true);
+      }
     }
   </script>
 </body>
