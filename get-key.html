@@ -44,17 +44,16 @@
     <h2>🔑 KEY CỦA BẠN</h2>
     <p>Xác thực thành công qua Link4m</p>
     
-    <div id="status">⏳ Đang kết nối hệ thống...</div>
+    <div id="status">⏳ Đang kiểm tra nguồn truy cập...</div>
     
     <div id="key-section" style="display: none;">
       <div class="key-box" id="generatedKey">meizulover_XXXXXXXXX</div>
       <button class="btn-copy" onclick="copyKey()">SAO CHÉP KEY</button>
-      <p class="note">* Key chỉ sử dụng 1 LẦN. Hệ thống sẽ tự xóa Key ngay khi bạn kích hoạt vào App.</p>
+      <p class="note">* Key chỉ sử dụng 1 LẦN. Để lấy Key khác, bạn phải vượt lại Link4m.</p>
     </div>
   </div>
 
   <script>
-    // Cấu hình kết nối Firebase ogekeyl4m (Singapore)
     const firebaseConfig = {
       apiKey: "AIzaSyAhHdsZw5xwq_hmtU_oe9ELSgEw6L6pxvY",
       authDomain: "ogekeyl4m.firebaseapp.com",
@@ -72,34 +71,54 @@
       if (isError) statusEl.style.color = '#dc3545';
     }
 
-    try {
-      firebase.initializeApp(firebaseConfig);
-      const database = firebase.database();
+    // 1. KIỂM TRA MÃ BẢO VỆ TỪ LINK4M (?from=link4m)
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromSource = urlParams.get('from');
 
-      // Hàm sinh Key dạng meizulover_ + 9 ký tự viết hoa/số
-      function generateMeizuKey(length = 9) {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let result = '';
-        for (let i = 0; i < length; i++) {
-          result += chars.charAt(Math.floor(Math.random() * chars.length));
+    if (fromSource !== 'link4m') {
+      updateStatus("❌ LỖI: Truy cập bị từ chối! Bạn phải vượt link qua Link4m để lấy Key.", true);
+    } else {
+      try {
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // 2. CHỐNG F5 LẤY NHIỀU KEY (Kiểm tra trong phiên làm việc)
+        const savedKey = sessionStorage.getItem('current_meizu_key');
+
+        if (savedKey) {
+          // Nếu đã sinh Key trong lượt truy cập này, hiển thị lại Key cũ
+          document.getElementById('status').style.display = 'none';
+          document.getElementById('generatedKey').innerText = savedKey;
+          document.getElementById('key-section').style.display = 'block';
+        } else {
+          // Sinh Key mới duy nhất
+          function generateMeizuKey(length = 9) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+              result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return 'meizulover_' + result;
+          }
+
+          const newKey = generateMeizuKey();
+          updateStatus("⏳ Đang lưu Key lên Firebase...");
+
+          database.ref('keys/' + newKey).set({
+            created_at: new Date().toISOString()
+          }).then(() => {
+            // Lưu lại Key vào bộ nhớ tạm phiên làm việc
+            sessionStorage.setItem('current_meizu_key', newKey);
+            document.getElementById('status').style.display = 'none';
+            document.getElementById('generatedKey').innerText = newKey;
+            document.getElementById('key-section').style.display = 'block';
+          }).catch((error) => {
+            updateStatus('❌ Lỗi ghi Firebase: ' + error.message, true);
+          });
         }
-        return 'meizulover_' + result;
+      } catch (e) {
+        updateStatus("❌ Lỗi khởi tạo Firebase: " + e.message, true);
       }
-
-      const newKey = generateMeizuKey();
-      updateStatus("⏳ Đang lưu Key lên Firebase...");
-
-      database.ref('keys/' + newKey).set({
-        created_at: new Date().toISOString()
-      }).then(() => {
-        document.getElementById('status').style.display = 'none';
-        document.getElementById('generatedKey').innerText = newKey;
-        document.getElementById('key-section').style.display = 'block';
-      }).catch((error) => {
-        updateStatus('❌ Lỗi ghi Firebase: ' + error.message, true);
-      });
-    } catch (e) {
-      updateStatus("❌ Lỗi khởi tạo Firebase: " + e.message, true);
     }
 
     function copyKey() {
