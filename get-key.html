@@ -1,118 +1,501 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lấy Key Kích Hoạt</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f4f6f9; display: flex; justify-content: center;
-      align-items: center; min-height: 100vh; padding: 15px;
-    }
-    .card {
-      background: #fff; padding: 28px 20px; border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center;
-      max-width: 420px; width: 100%;
-    }
-    .card h2 { color: #1a1a1a; font-size: 20px; margin-bottom: 8px; }
-    .card p { font-size: 14px; color: #666; margin-bottom: 20px; }
-    .key-box {
-      font-size: 17px; font-weight: 800; color: #28a745;
-      background: #f4fbf7; padding: 14px; border-radius: 10px;
-      border: 2px dashed #28a745; margin: 15px 0; word-break: break-all;
-    }
-    .btn-copy {
-      background: #007bff; color: white; border: none; padding: 12px;
-      border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 700; width: 100%;
-    }
-    #status { color: #fd7e14; font-size: 14px; font-weight: 600; margin: 15px 0; }
-    .note { font-size: 12px; color: #dc3545; margin-top: 15px; font-style: italic; }
-  </style>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1">
+
+<title>Nhận Key LoveMeizu</title>
+
+<style>
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  color: white;
+
+  background:
+    radial-gradient(
+      600px 400px at 10% 0%,
+      rgba(59,130,246,.25),
+      transparent 65%
+    ),
+    #050609;
+}
+
+.card {
+
+  width: 100%;
+  max-width: 420px;
+
+  padding: 30px 22px;
+
+  border-radius: 28px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.10),
+      rgba(255,255,255,.035)
+    );
+
+  border: 1px solid
+    rgba(255,255,255,.14);
+
+  backdrop-filter:
+    blur(28px)
+    saturate(140%);
+
+  -webkit-backdrop-filter:
+    blur(28px)
+    saturate(140%);
+
+  box-shadow:
+    inset 0 1px
+      rgba(255,255,255,.10),
+    0 30px 80px
+      rgba(0,0,0,.55);
+}
+
+.badge {
+
+  display: inline-block;
+
+  padding: 6px 11px;
+
+  border-radius: 999px;
+
+  color: #bfdbfe;
+
+  background:
+    rgba(59,130,246,.1);
+
+  border: 1px solid
+    rgba(96,165,250,.2);
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: .07em;
+
+  margin-bottom: 15px;
+}
+
+h1 {
+
+  font-size: 23px;
+
+  margin-bottom: 8px;
+}
+
+.sub {
+
+  color: #a5a9b3;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+
+  margin-bottom: 20px;
+}
+
+.status {
+
+  padding: 14px;
+
+  border-radius: 15px;
+
+  color: #fbbf24;
+
+  background:
+    rgba(255,255,255,.045);
+
+  border: 1px solid
+    rgba(255,255,255,.08);
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+.status.ok {
+
+  color: #86efac;
+
+  background:
+    rgba(34,197,94,.07);
+
+  border-color:
+    rgba(34,197,94,.20);
+}
+
+.status.error {
+
+  color: #fca5a5;
+
+  background:
+    rgba(239,68,68,.07);
+
+  border-color:
+    rgba(239,68,68,.20);
+}
+
+.key-section {
+
+  display: none;
+
+  margin-top: 18px;
+}
+
+.label {
+
+  color: #8f95a1;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  letter-spacing: .08em;
+
+  text-transform: uppercase;
+
+  margin-bottom: 7px;
+}
+
+.key {
+
+  padding: 16px;
+
+  border-radius: 16px;
+
+  color: #86efac;
+
+  background:
+    rgba(34,197,94,.08);
+
+  border: 1px solid
+    rgba(34,197,94,.28);
+
+  font-size: 15px;
+
+  font-weight: 800;
+
+  word-break: break-all;
+
+  margin-bottom: 10px;
+}
+
+button {
+
+  width: 100%;
+
+  padding: 14px;
+
+  border: 0;
+
+  border-radius: 15px;
+
+  color: white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #3b82f6,
+      #2563eb
+    );
+
+  font-size: 14px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 28px
+    rgba(37,99,235,.28);
+}
+
+button:active {
+  transform: scale(.98);
+}
+
+.note {
+
+  margin-top: 14px;
+
+  padding: 12px;
+
+  border-radius: 13px;
+
+  color: #aeb3bd;
+
+  background:
+    rgba(255,255,255,.035);
+
+  font-size: 11px;
+
+  line-height: 1.55;
+}
+
+.footer {
+
+  margin-top: 20px;
+
+  text-align: center;
+
+  color: #666b76;
+
+  font-size: 10px;
+}
+
+</style>
+
 </head>
+
 <body>
-  <div class="card">
-    <h2>🔑 KEY CỦA BẠN</h2>
-    <p>Xác thực thành công qua Link4m</p>
-    <div id="status">⏳ Đang kiểm tra hệ thống...</div>
-    <div id="key-section" style="display: none;">
-      <div class="key-box" id="generatedKey">meizulover_XXXXXXXXX</div>
-      <button class="btn-copy" id="btnCopy" onclick="copyKey()">SAO CHÉP KEY</button>
-      <p class="note">* Key chỉ dùng 1 LẦN. Muốn key mới phải vượt lại Link4m.</p>
-    </div>
+
+<div class="card">
+
+  <div class="badge">
+    ● SECURE ONE-TIME KEY
   </div>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAhHdsZw5xwq_hmtU_oe9ELSgEw6L6pxvY",
-      authDomain: "ogekeyl4m.firebaseapp.com",
-      databaseURL: "https://ogekeyl4m-default-rtdb.asia-southeast1.firebasedatabase.app/",
-      projectId: "ogekeyl4m",
-      storageBucket: "ogekeyl4m.firebasestorage.app",
-      messagingSenderId: "737277929162",
-      appId: "1:737277929162:web:0a75c0f0a447d7ad63f633",
-      measurementId: "G-JXG8PS8722"
-    };
 
-    function updateStatus(msg, isError) {
-      var el = document.getElementById('status');
-      el.innerText = msg;
-      if (isError) el.style.color = '#dc3545';
-    }
+  <h1>
+    🔑 KEY CỦA BẠN
+  </h1>
 
-    var fromSource = new URLSearchParams(window.location.search).get('from');
-    if (!fromSource || fromSource.toLowerCase() !== 'link4m') {
-      updateStatus("❌ LỖI: Truy cập bị từ chối! Bạn phải vượt link qua Link4m để lấy Key.", true);
-    } else {
-      window.history.replaceState({}, document.title, window.location.pathname);
-      try {
-        firebase.initializeApp(firebaseConfig);
-        var database = firebase.database();
+  <p class="sub">
+    Hệ thống đang kiểm tra token xác thực
+    của lượt Link4m này.
+  </p>
 
-        function generateMeizuKey(len) {
-          len = len || 9;
-          var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-          var s = '';
-          for (var i = 0; i < len; i++) s += chars.charAt(Math.floor(Math.random() * chars.length));
-          return 'meizulover_' + s;
+  <div
+    id="status"
+    class="status">
+
+    ⏳ Đang xác thực...
+
+  </div>
+
+  <div
+    id="keySection"
+    class="key-section">
+
+    <div class="label">
+      Activation Key
+    </div>
+
+    <div
+      id="key"
+      class="key">
+      —
+    </div>
+
+    <button
+      onclick="copyKey()">
+
+      SAO CHÉP KEY
+
+    </button>
+
+    <div class="note">
+
+      ⚠️ Key chỉ có thể sử dụng
+      một lần. Sau khi APK xác nhận
+      thành công, key sẽ bị vô hiệu hóa.
+
+    </div>
+
+  </div>
+
+  <div class="footer">
+    make by lovemeizu
+  </div>
+
+</div>
+
+<script>
+
+function getToken() {
+
+  return new URLSearchParams(
+    window.location.search
+  ).get("token");
+
+}
+
+async function claim() {
+
+  const token =
+    getToken();
+
+  /*
+   * Không có token:
+   *
+   * /get-key.html?from=link4m
+   *
+   * => TỪ CHỐI
+   */
+
+  if (!token) {
+
+    setStatus(
+      "❌ Liên kết không hợp lệ. Hãy lấy Link4m mới.",
+      "error"
+    );
+
+    return;
+  }
+
+  try {
+
+    setStatus(
+      "⏳ Đang xác thực token...",
+      ""
+    );
+
+    const response =
+      await fetch(
+        "/api/claim",
+        {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+            token: token
+          })
+
         }
+      );
 
-        var newKey = generateMeizuKey();
-        updateStatus("⏳ Đang tạo Key...");
+    const data =
+      await response.json();
 
-        // Ghi đúng nhánh /keys/ (khớp app)
-        database.ref('keys/' + newKey).set({
-          created_at: new Date().toISOString()
-        }).then(function () {
-          document.getElementById('status').style.display = 'none';
-          document.getElementById('generatedKey').innerText = newKey;
-          document.getElementById('key-section').style.display = 'block';
-        }).catch(function (e) {
-          updateStatus('❌ Lỗi Firebase: ' + e.message, true);
-        });
-      } catch (e) {
-        updateStatus("❌ Lỗi: " + e.message, true);
-      }
+    /*
+     * Xóa token khỏi URL
+     */
+
+    window.history.replaceState(
+      {},
+      document.title,
+      window.location.pathname
+    );
+
+    if (
+      !response.ok ||
+      !data.success
+    ) {
+
+      throw new Error(
+        data.message ||
+        "Token không hợp lệ."
+      );
     }
 
-    function copyKey() {
-      var t = document.getElementById('generatedKey').innerText;
-      var btn = document.getElementById('btnCopy');
-      if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(t).then(function () {
-          btn.innerText = "✅ ĐÃ SAO CHÉP!";
-          btn.style.background = "#28a745";
-          setTimeout(function () { btn.innerText = "SAO CHÉP KEY"; btn.style.background = "#007bff"; }, 2000);
-        });
-      } else {
-        var ta = document.createElement('textarea');
-        ta.value = t; document.body.appendChild(ta); ta.select();
-        try { document.execCommand('copy'); alert('Đã copy: ' + t); } catch (e) { alert(t); }
-        document.body.removeChild(ta);
-      }
-    }
-  </script>
+    document.getElementById(
+      "key"
+    ).textContent =
+      data.key;
+
+    document.getElementById(
+      "keySection"
+    ).style.display =
+      "block";
+
+    setStatus(
+      "✓ Xác thực thành công — Key đã được cấp.",
+      "ok"
+    );
+
+  } catch (error) {
+
+    setStatus(
+      "❌ " +
+      (
+        error.message ||
+        "Không thể xác thực."
+      ),
+      "error"
+    );
+
+  }
+
+}
+
+function setStatus(
+  text,
+  type
+) {
+
+  const el =
+    document.getElementById(
+      "status"
+    );
+
+  el.textContent = text;
+
+  el.className =
+    "status " +
+    (type || "");
+
+}
+
+async function copyKey() {
+
+  const key =
+    document.getElementById(
+      "key"
+    ).textContent;
+
+  try {
+
+    await navigator.clipboard
+      .writeText(key);
+
+    alert(
+      "✓ Đã sao chép Key!"
+    );
+
+  } catch (e) {
+
+    alert(key);
+
+  }
+
+}
+
+claim();
+
+</script>
+
 </body>
+
 </html>
