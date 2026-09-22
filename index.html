@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Nhận Key</title>
+
+</head>
+
+<body>
+
+<h2>Key của bạn</h2>
+
+<div id="status">
+Đang kiểm tra...
+</div>
+
+<div id="keyBox" style="display:none">
+
+    <input
+        id="key"
+        readonly
+    >
+
+    <button onclick="copyKey()">
+        COPY KEY
+    </button>
+
+</div>
+
+<script>
+
+const params =
+    new URLSearchParams(location.search);
+
+const session =
+    params.get("session");
+
+async function loadKey() {
+
+    if (!session) {
+
+        document.getElementById("status")
+            .textContent =
+            "Session không hợp lệ";
+
+        return;
+    }
+
+    /*
+     * Không tự tin rằng người dùng đã vượt Link4M.
+     *
+     * Server phải xác nhận session trước.
+     */
+
+    const response =
+        await fetch(
+            "https://YOUR-BACKEND-DOMAIN/claim?session="
+            + encodeURIComponent(session)
+        );
+
+    const data =
+        await response.json();
+
+    if (!data.success) {
+
+        document.getElementById("status")
+            .textContent =
+            "Chưa xác nhận hoàn thành Link4M.";
+
+        return;
+    }
+
+    document.getElementById("status")
+        .style.display = "none";
+
+    document.getElementById("keyBox")
+        .style.display = "block";
+
+    document.getElementById("key")
+        .value = data.key;
+
+}
+
+async function copyKey() {
+
+    const key =
+        document.getElementById("key").value;
+
+    await navigator.clipboard.writeText(key);
+
+    alert("Đã copy key");
+
+}
+
+loadKey();
+
+</script>
+
+</body>
+
+</html>
