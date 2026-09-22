@@ -1,379 +1,1121 @@
 <!DOCTYPE html><html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nhận Key — LoveMeizu</title><style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>Nhận Key Beta</title><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>
+:root{
+  --bg:#050609;
+  --glass:rgba(255,255,255,.065);
+  --glass2:rgba(255,255,255,.035);
+  --stroke:rgba(255,255,255,.13);
+  --stroke-soft:rgba(255,255,255,.07);
+
+  --text:#f7f8fb;
+  --muted:#9b9da7;
+
+  --blue:#4b8dff;
+  --blue2:#246bff;
+
+  --green:#39dc7b;
+  --red:#ff6868;
 }
 
-body {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    color: white;
-    background:
-        radial-gradient(circle at 20% 20%, rgba(80,120,255,.25), transparent 35%),
-        radial-gradient(circle at 80% 80%, rgba(0,220,255,.18), transparent 35%),
-        #05070b;
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
-.card {
-    width: 100%;
-    max-width: 430px;
-    padding: 30px;
-    border-radius: 28px;
-
-    background: rgba(255,255,255,.08);
-    border: 1px solid rgba(255,255,255,.18);
-
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-
-    box-shadow:
-        0 25px 80px rgba(0,0,0,.55),
-        inset 0 1px 1px rgba(255,255,255,.15);
-
-    text-align: center;
+html,
+body{
+  width:100%;
+  min-height:100%;
 }
 
-.logo {
-    width: 72px;
-    height: 72px;
-    margin: 0 auto 18px;
+body{
+  min-height:100vh;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 
-    border-radius: 22px;
-    font-size: 32px;
+  padding:20px;
 
-    background: rgba(255,255,255,.12);
-    border: 1px solid rgba(255,255,255,.2);
+  font-family:
+    "Plus Jakarta Sans",
+    system-ui,
+    sans-serif;
 
-    box-shadow:
-        inset 0 1px rgba(255,255,255,.2),
-        0 10px 30px rgba(0,0,0,.3);
+  color:var(--text);
+
+  background:
+    radial-gradient(
+      600px 420px at 5% 0%,
+      rgba(65,130,255,.18),
+      transparent 68%
+    ),
+    radial-gradient(
+      500px 380px at 100% 100%,
+      rgba(0,190,255,.11),
+      transparent 68%
+    ),
+    #050609;
+
+  overflow-x:hidden;
 }
 
-h1 {
-    font-size: 25px;
-    margin-bottom: 9px;
+/* =========================
+   MOVING LIQUID LIGHT
+========================= */
+
+body::before,
+body::after{
+  content:"";
+
+  position:fixed;
+
+  pointer-events:none;
+
+  border-radius:50%;
+
+  filter:blur(35px);
+
+  z-index:0;
 }
 
-.subtitle {
-    color: rgba(255,255,255,.65);
-    font-size: 14px;
-    line-height: 1.5;
-    margin-bottom: 25px;
-}
+body::before{
+  width:320px;
+  height:320px;
 
-.status {
-    min-height: 48px;
-    padding: 14px;
-    border-radius: 16px;
+  left:-150px;
+  top:-130px;
 
-    background: rgba(255,255,255,.06);
-    border: 1px solid rgba(255,255,255,.1);
-
-    font-size: 14px;
-    color: rgba(255,255,255,.75);
-
-    margin-bottom: 15px;
-}
-
-.key-box {
-    display: none;
-    margin-top: 15px;
-}
-
-.key {
-    padding: 16px;
-    border-radius: 16px;
-
-    background: rgba(0,0,0,.25);
-    border: 1px solid rgba(255,255,255,.15);
-
-    font-size: 16px;
-    font-weight: bold;
-
-    word-break: break-all;
-    margin-bottom: 12px;
-}
-
-button {
-    width: 100%;
-    border: 0;
-    padding: 15px;
-    border-radius: 16px;
-
-    color: white;
-    font-size: 15px;
-    font-weight: bold;
-
-    cursor: pointer;
-
-    background: linear-gradient(
-        135deg,
-        rgba(80,130,255,.85),
-        rgba(0,210,255,.65)
+  background:
+    radial-gradient(
+      circle,
+      rgba(80,145,255,.20),
+      transparent 68%
     );
 
-    box-shadow:
-        0 10px 30px rgba(0,150,255,.2);
-
-    transition: .2s;
+  animation:
+    liquidOne 10s ease-in-out infinite;
 }
 
-button:active {
-    transform: scale(.97);
+body::after{
+  width:340px;
+  height:340px;
+
+  right:-160px;
+  bottom:-150px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(0,205,255,.13),
+      transparent 68%
+    );
+
+  animation:
+    liquidTwo 12s ease-in-out infinite;
 }
 
-.error {
-    color: #ff8f9a;
+@keyframes liquidOne{
+
+  0%,100%{
+    transform:
+      translate(0,0)
+      scale(1);
+  }
+
+  50%{
+    transform:
+      translate(150px,110px)
+      scale(1.18);
+  }
 }
 
-.success {
-    color: #8dffcc;
+@keyframes liquidTwo{
+
+  0%,100%{
+    transform:
+      translate(0,0)
+      scale(1);
+  }
+
+  50%{
+    transform:
+      translate(-130px,-100px)
+      scale(1.15);
+  }
 }
 
-.loading {
-    color: rgba(255,255,255,.7);
+/* =========================
+   SHELL
+========================= */
+
+.shell{
+  width:100%;
+  max-width:430px;
+
+  position:relative;
+  z-index:2;
 }
 
-.footer {
-    margin-top: 20px;
-    font-size: 12px;
-    color: rgba(255,255,255,.4);
+/* =========================
+   GLASS CARD
+========================= */
+
+.card{
+  position:relative;
+
+  overflow:hidden;
+
+  padding:28px 22px 22px;
+
+  border-radius:30px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.095),
+      rgba(255,255,255,.032)
+    );
+
+  border:1px solid var(--stroke);
+
+  backdrop-filter:
+    blur(30px)
+    saturate(155%);
+
+  -webkit-backdrop-filter:
+    blur(30px)
+    saturate(155%);
+
+  box-shadow:
+    0 35px 90px rgba(0,0,0,.58),
+    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 -1px 0 rgba(255,255,255,.025);
+
+  animation:
+    cardIn .65s cubic-bezier(.2,.8,.2,1);
 }
-</style></head><body><div class="card"><div class="logo">🔑</div>
 
-<h1>Nhận Key</h1>
+@keyframes cardIn{
 
-<div class="subtitle">
-    Share Apps Việt hoá<br>
-    Tiện ích by LoveMeizu
+  from{
+    opacity:0;
+
+    transform:
+      translateY(18px)
+      scale(.97);
+  }
+
+  to{
+    opacity:1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+/* =========================
+   GLASS REFLECTION
+========================= */
+
+.card::before{
+  content:"";
+
+  position:absolute;
+
+  inset:-40%;
+
+  background:
+    linear-gradient(
+      115deg,
+      transparent 38%,
+      rgba(255,255,255,.075) 48%,
+      transparent 58%
+    );
+
+  transform:
+    translateX(-65%)
+    rotate(8deg);
+
+  animation:
+    glassShine 7s ease-in-out infinite;
+
+  pointer-events:none;
+}
+
+@keyframes glassShine{
+
+  0%,45%{
+    transform:
+      translateX(-65%)
+      rotate(8deg);
+  }
+
+  70%,100%{
+    transform:
+      translateX(65%)
+      rotate(8deg);
+  }
+}
+
+/* =========================
+   TOP
+========================= */
+
+.top{
+  position:relative;
+
+  z-index:1;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  margin-bottom:20px;
+}
+
+.icon{
+  width:46px;
+  height:46px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  border-radius:15px;
+
+  font-size:21px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(80,145,255,.20),
+      rgba(255,255,255,.045)
+    );
+
+  border:1px solid
+    rgba(105,160,255,.22);
+
+  box-shadow:
+    inset 0 1px 0
+      rgba(255,255,255,.12),
+
+    0 8px 28px
+      rgba(45,110,255,.12);
+}
+
+.live{
+  display:flex;
+
+  align-items:center;
+
+  gap:7px;
+
+  padding:7px 10px;
+
+  border-radius:999px;
+
+  color:#a9caff;
+
+  font-size:9px;
+
+  font-weight:800;
+
+  letter-spacing:.08em;
+
+  text-transform:uppercase;
+
+  background:
+    rgba(59,130,246,.08);
+
+  border:1px solid
+    rgba(80,145,255,.18);
+}
+
+.live-dot{
+  width:6px;
+  height:6px;
+
+  border-radius:50%;
+
+  background:#61a1ff;
+
+  box-shadow:
+    0 0 10px
+    rgba(80,150,255,.9);
+
+  animation:
+    pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse{
+
+  0%,100%{
+    opacity:.45;
+    transform:scale(.8);
+  }
+
+  50%{
+    opacity:1;
+    transform:scale(1.15);
+  }
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.content{
+  position:relative;
+  z-index:1;
+}
+
+h1{
+  font-size:25px;
+
+  line-height:1.15;
+
+  font-weight:800;
+
+  letter-spacing:-.045em;
+
+  margin-bottom:9px;
+}
+
+.sub{
+  color:var(--muted);
+
+  font-size:13px;
+
+  line-height:1.65;
+
+  margin-bottom:22px;
+}
+
+.sub b{
+  color:#dfeaff;
+}
+
+/* =========================
+   STATUS
+========================= */
+
+.status-wrap{
+  display:flex;
+
+  align-items:center;
+
+  gap:8px;
+
+  margin-top:14px;
+
+  min-height:22px;
+
+  padding:0 2px;
+}
+
+.status-icon{
+  width:7px;
+  height:7px;
+
+  flex:none;
+
+  border-radius:50%;
+
+  background:#f7c948;
+
+  box-shadow:
+    0 0 9px
+    rgba(247,201,72,.55);
+
+  animation:
+    pulse 1.8s infinite;
+}
+
+#status{
+  color:#c7c8ce;
+
+  font-size:11.5px;
+
+  font-weight:600;
+
+  white-space:pre-line;
+
+  word-break:break-word;
+}
+
+#status.err{
+  color:#ff8585;
+}
+
+#status.ok{
+  color:#62e596;
+}
+
+/* =========================
+   RESULT
+========================= */
+
+#result{
+  display:none;
+
+  margin-top:18px;
+
+  padding-top:17px;
+
+  border-top:
+    1px solid
+    rgba(255,255,255,.075);
+
+  animation:
+    resultIn .45s ease;
+}
+
+@keyframes resultIn{
+
+  from{
+    opacity:0;
+
+    transform:
+      translateY(8px);
+  }
+
+  to{
+    opacity:1;
+
+    transform:
+      translateY(0);
+  }
+}
+
+.label{
+  display:flex;
+
+  align-items:center;
+
+  gap:7px;
+
+  margin-bottom:8px;
+
+  color:#858894;
+
+  font-size:9px;
+
+  font-weight:800;
+
+  letter-spacing:.09em;
+
+  text-transform:uppercase;
+}
+
+.label::before{
+  content:"";
+
+  width:5px;
+  height:5px;
+
+  border-radius:50%;
+
+  background:#638fff;
+
+  box-shadow:
+    0 0 8px
+    rgba(70,130,255,.7);
+}
+
+.box{
+  min-height:52px;
+
+  display:flex;
+
+  align-items:center;
+
+  padding:13px 14px;
+
+  border-radius:15px;
+
+  font-size:12px;
+
+  font-weight:700;
+
+  line-height:1.5;
+
+  word-break:break-all;
+
+  background:
+    rgba(255,255,255,.035);
+
+  border:
+    1px solid
+    rgba(255,255,255,.08);
+
+  box-shadow:
+    inset 0 1px 0
+      rgba(255,255,255,.045);
+}
+
+.box.key{
+  color:#83efa9;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(35,210,110,.075),
+      rgba(255,255,255,.025)
+    );
+
+  border-color:
+    rgba(55,220,125,.22);
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.btn{
+  position:relative;
+
+  width:100%;
+
+  border:0;
+
+  border-radius:16px;
+
+  padding:15px 16px;
+
+  margin-top:10px;
+
+  font-family:inherit;
+
+  font-size:13.5px;
+
+  font-weight:800;
+
+  color:white;
+
+  cursor:pointer;
+
+  overflow:hidden;
+
+  transition:
+    transform .18s ease,
+    box-shadow .2s ease,
+    opacity .2s ease;
+}
+
+.btn::before{
+  content:"";
+
+  position:absolute;
+
+  inset:0;
+
+  background:
+    linear-gradient(
+      110deg,
+      transparent 25%,
+      rgba(255,255,255,.16),
+      transparent 75%
+    );
+
+  transform:
+    translateX(-100%);
+
+  transition:
+    transform .55s ease;
+}
+
+.btn:hover::before{
+  transform:
+    translateX(100%);
+}
+
+.btn:active{
+  transform:scale(.975);
+}
+
+.btn-copy{
+  background:
+    linear-gradient(
+      135deg,
+      #35d978,
+      #19ae59
+    );
+
+  box-shadow:
+    0 10px 28px
+      rgba(30,200,100,.20);
+}
+
+.btn-copy:hover{
+  box-shadow:
+    0 14px 35px
+      rgba(30,200,100,.32);
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.foot{
+  position:relative;
+
+  z-index:1;
+
+  margin-top:20px;
+
+  color:#656872;
+
+  text-align:center;
+
+  font-size:10px;
+
+  line-height:1.5;
+}
+
+.foot span{
+  color:#8b8e98;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:380px){
+
+  body{
+    padding:14px;
+  }
+
+  .card{
+    padding:
+      24px 18px 19px;
+
+    border-radius:26px;
+  }
+
+  h1{
+    font-size:22px;
+  }
+}
+</style></head><body><div class="shell">  <div class="card"><div class="top">
+
+  <div class="icon">
+    🔑
+  </div>
+
+  <div class="live">
+
+    <span class="live-dot"></span>
+
+    Secure Key
+
+  </div>
+
 </div>
 
-<div id="status" class="status loading">
-    Đang kiểm tra liên kết...
-</div>
 
-<div id="keyBox" class="key-box">
+<div class="content">
 
-    <div id="key" class="key"></div>
+  <h1>
+    Nhận Key Beta
+  </h1>
 
-    <button onclick="copyKey()">
-        📋 Sao chép Key
+  <p class="sub">
+    Key <b>dùng một lần</b> của bạn
+    sẽ được hiển thị sau khi xác nhận
+    liên kết thành công.
+  </p>
+
+
+  <div class="status-wrap">
+
+    <span
+      class="status-icon"
+      id="statusDot"
+    ></span>
+
+    <div id="status">
+      Đang xác nhận liên kết...
+    </div>
+
+  </div>
+
+
+  <div id="result">
+
+    <div class="label">
+      Access Key
+    </div>
+
+    <div
+      class="box key"
+      id="outKey"
+    >
+      —
+    </div>
+
+
+    <button
+      class="btn btn-copy"
+      id="copyButton"
+      type="button"
+    >
+      Sao chép Key
     </button>
 
+  </div>
+
 </div>
 
-<div class="footer">
-    LoveMeizu • Key System
-</div>
 
-</div><script>
+<p class="foot">
+
+  <span>
+    One-time Key System
+  </span>
+
+  · LoveMeizu
+
+</p>
+
+  </div></div><script>
+
 const BACKEND_URL =
-    "https://meizulover-key-backend.onrender.com";
+  "https://meizulover-key-backend.onrender.com";
+
 
 const params =
-    new URLSearchParams(window.location.search);
+  new URLSearchParams(
+    window.location.search
+  );
+
 
 const token =
-    params.get("token");
+  params.get("token");
+
 
 const statusEl =
-    document.getElementById("status");
-
-const keyBox =
-    document.getElementById("keyBox");
-
-const keyEl =
-    document.getElementById("key");
+  document.getElementById(
+    "status"
+  );
 
 
-function showError(message) {
+const statusDot =
+  document.getElementById(
+    "statusDot"
+  );
 
-    statusEl.className = "status error";
-    statusEl.textContent = message;
 
+const result =
+  document.getElementById(
+    "result"
+  );
+
+
+const outKey =
+  document.getElementById(
+    "outKey"
+  );
+
+
+const copyButton =
+  document.getElementById(
+    "copyButton"
+  );
+
+
+function setStatus(
+  message,
+  type
+){
+
+  statusEl.textContent =
+    message;
+
+  statusEl.className =
+    type || "";
+
+  if(type === "ok"){
+
+    statusDot.style.background =
+      "#39dc7b";
+
+    statusDot.style.boxShadow =
+      "0 0 9px rgba(57,220,123,.65)";
+
+  }
+
+  else if(type === "err"){
+
+    statusDot.style.background =
+      "#ff6868";
+
+    statusDot.style.boxShadow =
+      "0 0 9px rgba(255,104,104,.65)";
+
+  }
+
+  else{
+
+    statusDot.style.background =
+      "#f7c948";
+
+  }
 }
 
 
-async function loadKey() {
+async function loadKey(){
 
-    if (!token) {
+  if(!token){
 
-        showError(
-            "❌ Liên kết không hợp lệ hoặc thiếu token."
-        );
+    setStatus(
+      "Liên kết không hợp lệ hoặc thiếu token.",
+      "err"
+    );
 
-        return;
+    return;
+  }
+
+
+  try{
+
+    setStatus(
+      "Đang xác nhận liên kết...",
+      ""
+    );
+
+
+    const infoResponse =
+      await fetch(
+        BACKEND_URL +
+        "/session-info",
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+              token:token
+            })
+        }
+      );
+
+
+    if(!infoResponse.ok){
+
+      throw new Error(
+        "BACKEND_ERROR"
+      );
     }
 
-    try {
 
-        statusEl.className = "status loading";
-        statusEl.textContent =
-            "⏳ Đang xác nhận liên kết...";
+    const info =
+      await infoResponse.json();
 
 
-        const infoResponse =
-            await fetch(
-                BACKEND_URL + "/session-info",
-                {
-                    method: "POST",
+    if(!info.success){
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+      setStatus(
+        "Token không hợp lệ.",
+        "err"
+      );
 
-                    body: JSON.stringify({
-                        token: token
-                    })
-                }
-            );
-
-
-        const info =
-            await infoResponse.json();
-
-
-        if (!info.success) {
-
-            showError(
-                "❌ Token không hợp lệ hoặc đã hết hạn."
-            );
-
-            return;
-        }
-
-
-        if (info.used === true) {
-
-            showError(
-                "❌ Key này đã được sử dụng."
-            );
-
-            return;
-        }
-
-
-        statusEl.className = "status loading";
-        statusEl.textContent =
-            "🔐 Đang lấy Key...";
-
-
-        const claimResponse =
-            await fetch(
-                BACKEND_URL + "/claim",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        token: token
-                    })
-                }
-            );
-
-
-        const data =
-            await claimResponse.json();
-
-
-        if (!data.success) {
-
-            if (data.error === "KEY_USED") {
-
-                showError(
-                    "❌ Key này đã được sử dụng."
-                );
-
-            } else {
-
-                showError(
-                    "❌ Không thể nhận Key."
-                );
-            }
-
-            return;
-        }
-
-
-        keyEl.textContent =
-            data.key;
-
-        keyBox.style.display =
-            "block";
-
-
-        statusEl.className =
-            "status success";
-
-        statusEl.textContent =
-            "✅ Nhận Key thành công!";
-
-
-        /*
-         * Xóa token khỏi thanh địa chỉ
-         * nhưng không reload trang.
-         */
-        window.history.replaceState(
-            {},
-            document.title,
-            window.location.pathname
-        );
-
-    } catch (error) {
-
-        console.error(error);
-
-        showError(
-            "❌ Không thể kết nối máy chủ."
-        );
+      return;
     }
+
+
+    if(info.used === true){
+
+      setStatus(
+        "Key này đã được sử dụng.",
+        "err"
+      );
+
+      return;
+    }
+
+
+    setStatus(
+      "Đang lấy Key...",
+      ""
+    );
+
+
+    const claimResponse =
+      await fetch(
+        BACKEND_URL +
+        "/claim",
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+              token:token
+            })
+        }
+      );
+
+
+    if(!claimResponse.ok){
+
+      throw new Error(
+        "CLAIM_ERROR"
+      );
+    }
+
+
+    const data =
+      await claimResponse.json();
+
+
+    if(!data.success){
+
+      if(
+        data.error ===
+        "KEY_USED"
+      ){
+
+        setStatus(
+          "Key này đã được sử dụng.",
+          "err"
+        );
+
+      }else{
+
+        setStatus(
+          "Không thể nhận Key.",
+          "err"
+        );
+
+      }
+
+      return;
+    }
+
+
+    outKey.textContent =
+      data.key;
+
+
+    result.style.display =
+      "block";
+
+
+    setStatus(
+      "Nhận Key thành công!",
+      "ok"
+    );
+
+
+    /*
+      Giữ nguyên chức năng cũ:
+      sau khi nhận Key thành công,
+      token được xoá khỏi URL.
+    */
+
+    window.history.replaceState(
+      {},
+      document.title,
+      window.location.pathname
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "GET KEY ERROR:",
+      error
+    );
+
+
+    setStatus(
+      "Không thể kết nối máy chủ.",
+      "err"
+    );
+
+  }
 }
 
 
-async function copyKey() {
+copyButton.addEventListener(
+  "click",
+  async function(){
 
     const key =
-        keyEl.textContent;
+      outKey.textContent.trim();
 
-    if (!key) return;
 
-    try {
+    if(
+      !key ||
+      key === "—"
+    ){
 
-        await navigator.clipboard.writeText(key);
-
-        statusEl.className =
-            "status success";
-
-        statusEl.textContent =
-            "✅ Đã sao chép Key!";
-
-    } catch (error) {
-
-        showError(
-            "Không thể sao chép tự động. Hãy giữ vào Key để sao chép."
-        );
+      return;
     }
-}
+
+
+    try{
+
+      await navigator.clipboard
+        .writeText(key);
+
+
+      const oldText =
+        copyButton.textContent;
+
+
+      copyButton.textContent =
+        "✓ Đã sao chép Key";
+
+
+      setStatus(
+        "Key đã được sao chép!",
+        "ok"
+      );
+
+
+      setTimeout(
+        function(){
+
+          copyButton.textContent =
+            oldText;
+
+        },
+        1800
+      );
+
+
+    }catch(error){
+
+      setStatus(
+        "Không thể tự sao chép. Hãy nhấn giữ Key.",
+        "err"
+      );
+
+    }
+
+  }
+);
 
 
 loadKey();
+
 </script></body>
 </html>
