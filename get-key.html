@@ -1,3 +1,566 @@
+const express = require("express");
+const cors = require("cors");
+const crypto = require("crypto");
+const admin = require("firebase-admin");
+require("dotenv").config();
+
+const app = express();
+
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"]
+}));
+
+app.use(express.json());
+
+/* ==========================================
+   FIREBASE
+========================================== */
+
+const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_JSON
+  ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON)
+  : require("./ogekeyl4m-service-account.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: process.env.FIREBASE_DATABASE_URL
+});
+
+const db = admin.database();
+
+/* ==========================================
+   HELPERS
+========================================== */
+
+function randomString(length = 9) {
+  const chars =
+    "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+  let result = "";
+
+  for (let i = 0; i < length; i++) {
+    result += chars[
+      crypto.randomInt(0, chars.length)
+    ];
+  }
+
+  return result;
+}
+
+function generateKey() {
+  return "lovemeizu_" + randomString(9);
+}
+
+function generateToken() {
+  return crypto.randomBytes(32).toString("hex");
+}
+
+/* ==========================================
+   HEALTH
+========================================== */
+
+app.get("/health", (req, res) => {
+  res.json({
+    success: true,
+    service: "meizulover-key-system"
+  });
+});
+
+/* ==========================================
+   CREATE
+========================================== */
+
+app.post("/create", async (req, res) => {
+  try {
+
+    const key = generateKey();
+    const token = generateToken();
+
+    const createdAt = Date.now();
+
+    /*
+     * Link4M sẽ chuyển người dùng tới:
+     *
+     * get-key.html?token=...
+     */
+
+    const destination =
+      `${process.env.BASE_URL}/get-key.html?token=${encodeURIComponent(token)}`;
+
+    /*
+     * Tạo dữ liệu đúng schema hiện tại
+     *
+     * keys/
+     *   KEY/
+     *     created_at
+     *     Link4m
+     *     token
+     *     used
+     */
+
+    const keyRef =
+      db.ref("keys/" + key);
+
+    await keyRef.set({
+      created_at: createdAt,
+      Link4m: "",
+      token: token,
+      used: false
+    });
+
+    /*
+     * Gọi Link4M
+     */
+
+    const apiUrl =
+      "https://link4m.co/api-shorten/v2" +
+      "?api=" +
+      encodeURIComponent(
+        process.env.LINK4M_API_KEY
+      ) +
+      "&url=" +
+      encodeURIComponent(destination);
+
+    console.log("Dang tao Link4M...");
+
+    const response =
+      await fetch(apiUrl);
+
+    const responseText =
+      await response.text();
+
+    console.log(
+      "Link4M HTTP:",
+      response.status
+    );
+
+    console.log(
+      "Link4M RAW:",
+      responseText
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        "Link4M HTTP " +
+        response.status +
+        " | " +
+        responseText
+      );
+    }
+
+    let data;
+
+    try {
+      data = JSON.parse(responseText);
+    } catch (e) {
+      throw new Error(
+        "Link4M khong tra JSON: " +
+        responseText
+      );
+    }
+
+    if (data.status !== "success") {
+      throw new Error(
+        "Link4M failed: " +
+        (data.message || responseText)
+      );
+    }
+
+    if (!data.shortenedUrl) {
+      throw new Error(
+        "Link4M khong co shortenedUrl"
+      );
+    }
+
+    const shortUrl =
+      data.shortenedUrl;
+
+    /*
+     * Lưu Link4M vào đúng field
+     */
+
+    await keyRef.update({
+      Link4m: shortUrl
+    });
+
+    /*
+     * Không trả Key về frontend.
+     */
+
+    return res.json({
+      success: true,
+      token: token,
+      shortUrl: shortUrl
+    });
+
+  } catch (error) {
+
+    console.error(
+      "CREATE ERROR:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      error: "CREATE_FAILED"
+    });
+  }
+});
+
+/* ==========================================
+   FIND KEY BY TOKEN
+========================================== */
+
+async function findKeyByToken(token) {
+
+  const snapshot =
+    await db
+      .ref("keys")
+      .orderByChild("token")
+      .equalTo(token)
+      .once("value");
+
+  if (!snapshot.exists()) {
+    return null;
+  }
+
+  const data =
+    snapshot.val();
+
+  const keyNames =
+    Object.keys(data);
+
+  if (!keyNames.length) {
+    return null;
+  }
+
+  const key =
+    keyNames[0];
+
+  return {
+    key: key,
+    data: data[key]
+  };
+}
+
+/* ==========================================
+   SESSION INFO - A
+========================================== */
+
+app.post("/session-info", async (req, res) => {
+
+  try {
+
+    const token =
+      String(
+        req.body.token || ""
+      ).trim();
+
+    if (!token) {
+
+      return res.json({
+        success: false,
+        error: "MISSING_TOKEN"
+      });
+
+    }
+
+    const result =
+      await findKeyByToken(token);
+
+    if (!result) {
+
+      return res.json({
+        success: false,
+        error: "INVALID_TOKEN"
+      });
+
+    }
+
+    const data =
+      result.data;
+
+    return res.json({
+      success: true,
+      keyExists: true,
+      used: data.used === true,
+      created_at: data.created_at || null,
+      link4m: data.Link4m || null
+    });
+
+  } catch (error) {
+
+    console.error(
+      "SESSION INFO ERROR:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      error: "SESSION_INFO_FAILED"
+    });
+  }
+});
+
+/* ==========================================
+   CLAIM - A
+========================================== */
+
+app.post("/claim", async (req, res) => {
+
+  try {
+
+    const token =
+      String(
+        req.body.token || ""
+      ).trim();
+
+    if (!token) {
+
+      return res.json({
+        success: false,
+        error: "MISSING_TOKEN"
+      });
+
+    }
+
+    const result =
+      await findKeyByToken(token);
+
+    if (!result) {
+
+      return res.json({
+        success: false,
+        error: "INVALID_TOKEN"
+      });
+
+    }
+
+    const key =
+      result.key;
+
+    const data =
+      result.data;
+
+    /*
+     * Key đã dùng thì không cho nhận nữa.
+     */
+
+    if (data.used === true) {
+
+      return res.json({
+        success: false,
+        error: "KEY_USED"
+      });
+
+    }
+
+    /*
+     * Trả Key cho get-key.html.
+     *
+     * Chưa đổi used=true.
+     *
+     * used chỉ đổi khi APK consume.
+     */
+
+    return res.json({
+      success: true,
+      key: key
+    });
+
+  } catch (error) {
+
+    console.error(
+      "CLAIM ERROR:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      error: "CLAIM_FAILED"
+    });
+  }
+});
+
+/* ==========================================
+   VERIFY
+========================================== */
+
+app.post("/verify", async (req, res) => {
+
+  try {
+
+    const key =
+      String(
+        req.body.key || ""
+      ).trim();
+
+    if (!key) {
+
+      return res.json({
+        success: false,
+        error: "EMPTY_KEY"
+      });
+
+    }
+
+    const snapshot =
+      await db
+        .ref("keys/" + key)
+        .once("value");
+
+    if (!snapshot.exists()) {
+
+      return res.json({
+        success: false,
+        error: "INVALID_KEY"
+      });
+
+    }
+
+    const data =
+      snapshot.val();
+
+    if (data.used === true) {
+
+      return res.json({
+        success: false,
+        error: "KEY_USED"
+      });
+
+    }
+
+    return res.json({
+      success: true
+    });
+
+  } catch (error) {
+
+    console.error(
+      "VERIFY ERROR:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      error: "VERIFY_FAILED"
+    });
+  }
+});
+
+/* ==========================================
+   CONSUME
+========================================== */
+
+app.post("/consume", async (req, res) => {
+
+  try {
+
+    const key =
+      String(
+        req.body.key || ""
+      ).trim();
+
+    if (!key) {
+
+      return res.json({
+        success: false,
+        error: "EMPTY_KEY"
+      });
+
+    }
+
+    const keyRef =
+      db.ref("keys/" + key);
+
+    const snapshot =
+      await keyRef.once("value");
+
+    if (!snapshot.exists()) {
+
+      return res.json({
+        success: false,
+        error: "INVALID_KEY"
+      });
+
+    }
+
+    const data =
+      snapshot.val();
+
+    /*
+     * Atomic one-time consume.
+     */
+
+    const usedRef =
+      keyRef.child("used");
+
+    const transaction =
+      await usedRef.transaction(
+        (used) => {
+
+          if (used === true) {
+            return;
+          }
+
+          return true;
+        }
+      );
+
+    if (!transaction.committed) {
+
+      return res.json({
+        success: false,
+        error: "KEY_ALREADY_USED"
+      });
+
+    }
+
+    await keyRef.update({
+      usedAt: Date.now()
+    });
+
+    return res.json({
+      success: true
+    });
+
+  } catch (error) {
+
+    console.error(
+      "CONSUME ERROR:",
+      error
+    );
+
+    return res.status(500).json({
+      success: false,
+      error: "CONSUME_FAILED"
+    });
+  }
+});
+
+/* ==========================================
+   START
+========================================== */
+
+const PORT =
+  process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+
+  console.log(
+    "Server running on port",
+    PORT
+  );
+
+});
+
+2. "get-key.html" — trang sau Link4M
+
+Trang này không còn dùng "session". Nó đọc đúng "?token=..." và tìm Key trong schema Firebase hiện tại.
+
+:::writing{variant="document" id="92746" title="get-key.html — Backend A"}
+
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -7,268 +570,665 @@
 
 <meta
   name="viewport"
-  content="width=device-width,initial-scale=1">
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+>
 
-<title>Nhận Key LoveMeizu</title>
+<title>Nhận Key</title>
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+  rel="stylesheet"
+>
 
 <style>
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+:root{
+  --bg:#050609;
+  --text:#f7f8fb;
+  --muted:#999ca7;
+
+  --stroke:rgba(255,255,255,.13);
+  --green:#35dc7b;
+  --blue:#4b91ff;
+  --red:#ff6868;
 }
 
-body {
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
-  min-height: 100vh;
+body{
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  min-height:100vh;
 
-  padding: 20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:20px;
 
   font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
+    "Plus Jakarta Sans",
+    system-ui,
     sans-serif;
 
-  color: white;
+  color:var(--text);
 
   background:
     radial-gradient(
-      600px 400px at 10% 0%,
-      rgba(59,130,246,.25),
-      transparent 65%
+      600px 400px at 0% 0%,
+      rgba(65,130,255,.18),
+      transparent 68%
     ),
-    #050609;
+    radial-gradient(
+      550px 400px at 100% 100%,
+      rgba(0,205,255,.11),
+      transparent 68%
+    ),
+    var(--bg);
+
+  overflow:hidden;
 }
 
-.card {
+/* =========================
+   LIQUID LIGHT
+========================= */
 
-  width: 100%;
-  max-width: 420px;
+body::before,
+body::after{
 
-  padding: 30px 22px;
+  content:"";
 
-  border-radius: 28px;
+  position:fixed;
+
+  width:330px;
+  height:330px;
+
+  border-radius:50%;
+
+  filter:blur(38px);
+
+  pointer-events:none;
+
+}
+
+body::before{
+
+  left:-150px;
+  top:-130px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(70,140,255,.20),
+      transparent 68%
+    );
+
+  animation:
+    lightOne 10s ease-in-out infinite;
+
+}
+
+body::after{
+
+  right:-150px;
+  bottom:-150px;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(0,205,255,.13),
+      transparent 68%
+    );
+
+  animation:
+    lightTwo 12s ease-in-out infinite;
+
+}
+
+@keyframes lightOne{
+
+  0%,100%{
+    transform:
+      translate(0,0)
+      scale(1);
+  }
+
+  50%{
+    transform:
+      translate(140px,100px)
+      scale(1.18);
+  }
+
+}
+
+@keyframes lightTwo{
+
+  0%,100%{
+    transform:
+      translate(0,0)
+      scale(1);
+  }
+
+  50%{
+    transform:
+      translate(-120px,-90px)
+      scale(1.15);
+  }
+
+}
+
+/* =========================
+   CARD
+========================= */
+
+.shell{
+
+  width:100%;
+  max-width:430px;
+
+  position:relative;
+  z-index:2;
+
+}
+
+.card{
+
+  position:relative;
+
+  overflow:hidden;
+
+  padding:
+    28px 22px 23px;
+
+  border-radius:30px;
 
   background:
     linear-gradient(
       145deg,
-      rgba(255,255,255,.10),
-      rgba(255,255,255,.035)
+      rgba(255,255,255,.095),
+      rgba(255,255,255,.032)
     );
 
-  border: 1px solid
-    rgba(255,255,255,.14);
+  border:
+    1px solid var(--stroke);
 
   backdrop-filter:
-    blur(28px)
-    saturate(140%);
+    blur(30px)
+    saturate(155%);
 
   -webkit-backdrop-filter:
-    blur(28px)
-    saturate(140%);
+    blur(30px)
+    saturate(155%);
 
   box-shadow:
-    inset 0 1px
-      rgba(255,255,255,.10),
-    0 30px 80px
-      rgba(0,0,0,.55);
+    0 35px 90px
+      rgba(0,0,0,.58),
+
+    inset 0 1px 0
+      rgba(255,255,255,.16),
+
+    inset 0 -1px 0
+      rgba(255,255,255,.025);
+
+  animation:
+    cardIn .6s ease;
+
 }
 
-.badge {
+@keyframes cardIn{
 
-  display: inline-block;
+  from{
+    opacity:0;
+    transform:
+      translateY(15px)
+      scale(.97);
+  }
 
-  padding: 6px 11px;
+  to{
+    opacity:1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
 
-  border-radius: 999px;
+}
 
-  color: #bfdbfe;
+/* reflection */
+
+.card::before{
+
+  content:"";
+
+  position:absolute;
+
+  inset:-40%;
 
   background:
-    rgba(59,130,246,.1);
+    linear-gradient(
+      115deg,
+      transparent 38%,
+      rgba(255,255,255,.075) 48%,
+      transparent 58%
+    );
 
-  border: 1px solid
-    rgba(96,165,250,.2);
+  transform:
+    translateX(-65%)
+    rotate(8deg);
 
-  font-size: 10px;
-  font-weight: 700;
+  animation:
+    shine 7s ease-in-out infinite;
 
-  letter-spacing: .07em;
+  pointer-events:none;
 
-  margin-bottom: 15px;
 }
 
-h1 {
+@keyframes shine{
 
-  font-size: 23px;
+  0%,45%{
+    transform:
+      translateX(-65%)
+      rotate(8deg);
+  }
 
-  margin-bottom: 8px;
+  70%,100%{
+    transform:
+      translateX(65%)
+      rotate(8deg);
+  }
+
 }
 
-.sub {
+/* =========================
+   TOP
+========================= */
 
-  color: #a5a9b3;
+.top{
 
-  font-size: 13px;
+  position:relative;
+  z-index:1;
 
-  line-height: 1.6;
+  display:flex;
 
-  margin-bottom: 20px;
+  align-items:center;
+
+  justify-content:space-between;
+
+  margin-bottom:20px;
+
 }
 
-.status {
+.icon{
 
-  padding: 14px;
+  width:46px;
+  height:46px;
 
-  border-radius: 15px;
+  display:flex;
 
-  color: #fbbf24;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:15px;
+
+  font-size:20px;
 
   background:
-    rgba(255,255,255,.045);
+    linear-gradient(
+      145deg,
+      rgba(65,135,255,.20),
+      rgba(255,255,255,.045)
+    );
 
-  border: 1px solid
-    rgba(255,255,255,.08);
+  border:
+    1px solid
+    rgba(100,160,255,.22);
 
-  font-size: 13px;
+  box-shadow:
+    inset 0 1px 0
+      rgba(255,255,255,.12),
 
-  font-weight: 600;
+    0 8px 28px
+      rgba(45,110,255,.12);
+
 }
 
-.status.ok {
+.live{
 
-  color: #86efac;
+  display:flex;
+
+  align-items:center;
+
+  gap:7px;
+
+  padding:
+    7px 10px;
+
+  border-radius:999px;
+
+  color:#a9caff;
+
+  font-size:9px;
+
+  font-weight:800;
+
+  letter-spacing:.08em;
+
+  text-transform:uppercase;
 
   background:
-    rgba(34,197,94,.07);
+    rgba(59,130,246,.08);
 
-  border-color:
-    rgba(34,197,94,.20);
+  border:
+    1px solid
+    rgba(80,145,255,.18);
+
 }
 
-.status.error {
+.dot{
 
-  color: #fca5a5;
+  width:6px;
+  height:6px;
 
-  background:
-    rgba(239,68,68,.07);
+  border-radius:50%;
 
-  border-color:
-    rgba(239,68,68,.20);
+  background:#61a1ff;
+
+  box-shadow:
+    0 0 10px
+    rgba(80,150,255,.9);
+
+  animation:
+    pulse 1.8s ease-in-out infinite;
+
 }
 
-.key-section {
+@keyframes pulse{
 
-  display: none;
+  0%,100%{
+    opacity:.45;
+    transform:scale(.8);
+  }
 
-  margin-top: 18px;
+  50%{
+    opacity:1;
+    transform:scale(1.15);
+  }
+
 }
 
-.label {
+/* =========================
+   TEXT
+========================= */
 
-  color: #8f95a1;
+.content{
 
-  font-size: 10px;
+  position:relative;
+  z-index:1;
 
-  font-weight: 700;
-
-  letter-spacing: .08em;
-
-  text-transform: uppercase;
-
-  margin-bottom: 7px;
 }
 
-.key {
+h1{
 
-  padding: 16px;
+  font-size:25px;
 
-  border-radius: 16px;
+  line-height:1.15;
 
-  color: #86efac;
+  font-weight:800;
 
-  background:
-    rgba(34,197,94,.08);
+  letter-spacing:-.045em;
 
-  border: 1px solid
-    rgba(34,197,94,.28);
+  margin-bottom:9px;
 
-  font-size: 15px;
-
-  font-weight: 800;
-
-  word-break: break-all;
-
-  margin-bottom: 10px;
 }
 
-button {
+.sub{
 
-  width: 100%;
+  color:var(--muted);
 
-  padding: 14px;
+  font-size:13px;
 
-  border: 0;
+  line-height:1.65;
 
-  border-radius: 15px;
+  margin-bottom:20px;
 
-  color: white;
+}
+
+/* =========================
+   STATUS
+========================= */
+
+.status{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:8px;
+
+  min-height:22px;
+
+  margin-top:12px;
+
+  font-size:11.5px;
+
+  font-weight:600;
+
+  color:#c5c7ce;
+
+}
+
+.status-dot{
+
+  width:7px;
+  height:7px;
+
+  flex:none;
+
+  border-radius:50%;
+
+  background:#f5c84b;
+
+  box-shadow:
+    0 0 9px
+    rgba(245,200,75,.6);
+
+}
+
+.status.ok{
+  color:#62e596;
+}
+
+.status.ok .status-dot{
+
+  background:#42dc7c;
+
+  box-shadow:
+    0 0 10px
+    rgba(55,220,120,.75);
+
+}
+
+.status.error{
+  color:#ff8585;
+}
+
+.status.error .status-dot{
+
+  background:#ff6262;
+
+  box-shadow:
+    0 0 10px
+    rgba(255,70,70,.7);
+
+}
+
+/* =========================
+   KEY BOX
+========================= */
+
+#keySection{
+
+  display:none;
+
+  margin-top:20px;
+
+  padding-top:18px;
+
+  border-top:
+    1px solid
+    rgba(255,255,255,.075);
+
+  animation:
+    showKey .45s ease;
+
+}
+
+@keyframes showKey{
+
+  from{
+    opacity:0;
+    transform:translateY(8px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+}
+
+.label{
+
+  margin-bottom:8px;
+
+  color:#858894;
+
+  font-size:9px;
+
+  font-weight:800;
+
+  letter-spacing:.09em;
+
+  text-transform:uppercase;
+
+}
+
+.key{
+
+  min-height:50px;
+
+  display:flex;
+
+  align-items:center;
+
+  padding:
+    13px 14px;
+
+  border-radius:15px;
+
+  word-break:break-all;
+
+  font-size:13px;
+
+  font-weight:800;
+
+  color:#83efa9;
 
   background:
     linear-gradient(
       135deg,
-      #3b82f6,
-      #2563eb
+      rgba(35,210,110,.075),
+      rgba(255,255,255,.025)
     );
 
-  font-size: 14px;
+  border:
+    1px solid
+    rgba(55,220,125,.23);
 
-  font-weight: 800;
+  box-shadow:
+    inset 0 1px 0
+      rgba(255,255,255,.045);
 
-  cursor: pointer;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.btn{
+
+  width:100%;
+
+  border:0;
+
+  border-radius:15px;
+
+  padding:
+    14px 16px;
+
+  margin-top:10px;
+
+  font-family:inherit;
+
+  font-size:13px;
+
+  font-weight:800;
+
+  color:white;
+
+  cursor:pointer;
+
+  background:
+    linear-gradient(
+      135deg,
+      #35d978,
+      #18ad59
+    );
 
   box-shadow:
     0 10px 28px
-    rgba(37,99,235,.28);
+      rgba(30,200,100,.20);
+
+  transition:
+    transform .18s ease,
+    box-shadow .2s ease;
+
 }
 
-button:active {
-  transform: scale(.98);
+.btn:active{
+
+  transform:
+    scale(.975);
+
 }
 
-.note {
+.btn:hover{
 
-  margin-top: 14px;
+  box-shadow:
+    0 13px 34px
+      rgba(30,200,100,.30);
 
-  padding: 12px;
-
-  border-radius: 13px;
-
-  color: #aeb3bd;
-
-  background:
-    rgba(255,255,255,.035);
-
-  font-size: 11px;
-
-  line-height: 1.55;
 }
 
-.footer {
+/* =========================
+   FOOTER
+========================= */
 
-  margin-top: 20px;
+.foot{
 
-  text-align: center;
+  position:relative;
+  z-index:1;
 
-  color: #666b76;
+  margin-top:20px;
 
-  font-size: 10px;
+  text-align:center;
+
+  color:#656872;
+
+  font-size:10px;
+
 }
 
 </style>
@@ -277,225 +1237,244 @@ button:active {
 
 <body>
 
-<div class="card">
+<div class="shell">
 
-  <div class="badge">
-    ● SECURE ONE-TIME KEY
-  </div>
+  <div class="card">
 
-  <h1>
-    🔑 KEY CỦA BẠN
-  </h1>
+    <div class="top">
 
-  <p class="sub">
-    Hệ thống đang kiểm tra token xác thực
-    của lượt Link4m này.
-  </p>
+      <div class="icon">
+        🔑
+      </div>
 
-  <div
-    id="status"
-    class="status">
+      <div class="live">
 
-    ⏳ Đang xác thực...
+        <span class="dot"></span>
 
-  </div>
+        Key System
 
-  <div
-    id="keySection"
-    class="key-section">
-
-    <div class="label">
-      Activation Key
-    </div>
-
-    <div
-      id="key"
-      class="key">
-      —
-    </div>
-
-    <button
-      onclick="copyKey()">
-
-      SAO CHÉP KEY
-
-    </button>
-
-    <div class="note">
-
-      ⚠️ Key chỉ có thể sử dụng
-      một lần. Sau khi APK xác nhận
-      thành công, key sẽ bị vô hiệu hóa.
+      </div>
 
     </div>
 
-  </div>
 
-  <div class="footer">
-    make by lovemeizu
+    <div class="content">
+
+      <h1>
+        Nhận Key
+      </h1>
+
+      <p class="sub">
+        Liên kết đã được xử lý.
+        Hệ thống đang xác thực lượt nhận Key của bạn.
+      </p>
+
+
+      <div
+        class="status"
+        id="status"
+      >
+
+        <span class="status-dot"></span>
+
+        <span id="statusText">
+          Đang xác thực...
+        </span>
+
+      </div>
+
+
+      <div id="keySection">
+
+        <div class="label">
+          Key của bạn
+        </div>
+
+        <div
+          class="key"
+          id="key"
+        >
+          —
+        </div>
+
+        <button
+          class="btn"
+          onclick="copyKey()"
+        >
+          Sao chép Key
+        </button>
+
+      </div>
+
+
+      <p class="foot">
+        One-time Key System · LoveMeizu
+      </p>
+
+    </div>
+
   </div>
 
 </div>
 
+
 <script>
 
-function getToken() {
+/* ==========================================
+   BACKEND
+========================================== */
 
-  return new URLSearchParams(
+const BACKEND_URL =
+  "https://meizulover-key-backend.onrender.com";
+
+
+/* ==========================================
+   TOKEN
+========================================== */
+
+const params =
+  new URLSearchParams(
     window.location.search
-  ).get("token");
+  );
 
-}
+const token =
+  params.get("token");
 
-async function claim() {
 
-  const token =
-    getToken();
-
-  /*
-   * Không có token:
-   *
-   * /get-key.html?from=link4m
-   *
-   * => TỪ CHỐI
-   */
-
-  if (!token) {
-
-    setStatus(
-      "❌ Liên kết không hợp lệ. Hãy lấy Link4m mới.",
-      "error"
-    );
-
-    return;
-  }
-
-  try {
-
-    setStatus(
-      "⏳ Đang xác thực token...",
-      ""
-    );
-
-    const response =
-      await fetch(
-        "/api/claim",
-        {
-
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-
-          body: JSON.stringify({
-            token: token
-          })
-
-        }
-      );
-
-    const data =
-      await response.json();
-
-    /*
-     * Xóa token khỏi URL
-     */
-
-    window.history.replaceState(
-      {},
-      document.title,
-      window.location.pathname
-    );
-
-    if (
-      !response.ok ||
-      !data.success
-    ) {
-
-      throw new Error(
-        data.message ||
-        "Token không hợp lệ."
-      );
-    }
-
-    document.getElementById(
-      "key"
-    ).textContent =
-      data.key;
-
-    document.getElementById(
-      "keySection"
-    ).style.display =
-      "block";
-
-    setStatus(
-      "✓ Xác thực thành công — Key đã được cấp.",
-      "ok"
-    );
-
-  } catch (error) {
-
-    setStatus(
-      "❌ " +
-      (
-        error.message ||
-        "Không thể xác thực."
-      ),
-      "error"
-    );
-
-  }
-
-}
+/* ==========================================
+   STATUS
+========================================== */
 
 function setStatus(
-  text,
-  type
-) {
+  message,
+  type = ""
+){
 
-  const el =
+  const status =
     document.getElementById(
       "status"
     );
 
-  el.textContent = text;
+  const text =
+    document.getElementById(
+      "statusText"
+    );
 
-  el.className =
-    "status " +
-    (type || "");
+  text.textContent =
+    message;
+
+  status.className =
+    "status " + type;
 
 }
 
-async function copyKey() {
 
-  const key =
-    document.getElementById(
-      "key"
-    ).textContent;
+/* ==========================================
+   LOAD KEY
+========================================== */
 
-  try {
+async function loadKey(){
 
-    await navigator.clipboard
-      .writeText(key);
+  if(!token){
 
-    alert(
-      "✓ Đã sao chép Key!"
+    setStatus(
+      "Liên kết không hợp lệ. Hãy lấy Link4M mới.",
+      "error"
     );
 
-  } catch (e) {
-
-    alert(key);
+    return;
 
   }
 
-}
 
-claim();
+  try{
 
-</script>
+    setStatus(
+      "Đang kiểm tra liên kết...",
+      ""
+    );
 
-</body>
 
-</html>
+    /* ==========================
+       SESSION INFO
+    ========================== */
+
+    const infoResponse =
+      await fetch(
+        BACKEND_URL +
+        "/session-info",
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+              token:token
+            })
+        }
+      );
+
+
+    if(!infoResponse.ok){
+
+      throw new Error(
+        "HTTP " +
+        infoResponse.status
+      );
+
+    }
+
+
+    const info =
+      await infoResponse.json();
+
+
+    if(!info.success){
+
+      if(
+        info.error ===
+        "INVALID_TOKEN"
+      ){
+
+        throw new Error(
+          "Liên kết không hợp lệ. Hãy lấy Link4M mới."
+        );
+
+      }
+
+
+      if(
+        info.error ===
+        "KEY_USED"
+      ){
+
+        throw new Error(
+          "Key này đã được sử dụng."
+        );
+
+      }
+
+
+      throw new Error(
+        info.error ||
+        "Không thể xác thực liên kết."
+      );
+
+    }
+
+
+    if(info.used === true){
+
+      throw new Error(
+        "Key này đã được sử dụng."
+      );
+
+    }
+
+
+    /* ==========================
+ 
