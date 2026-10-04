@@ -1,20 +1,21 @@
-<!DOCTYPE html><html lang="vi">
+<!DOCTYPE html>
+<html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"><title>Nhận Key Beta</title><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+<title>Nhận Key Beta · LoveMeizu</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
 :root{
   --bg:#050609;
   --glass:rgba(255,255,255,.065);
-  --glass2:rgba(255,255,255,.035);
-  --stroke:rgba(255,255,255,.13);
-  --stroke-soft:rgba(255,255,255,.07);
-
+  --stroke:rgba(255,255,255,.12);
   --text:#f7f8fb;
-  --muted:#9b9da7;
-
+  --muted:#989ba6;
   --blue:#4b8dff;
-  --blue2:#246bff;
-
   --green:#39dc7b;
   --red:#ff6868;
 }
@@ -33,29 +34,31 @@ body{
 
 body{
   min-height:100vh;
-
   display:flex;
   align-items:center;
   justify-content:center;
 
-  padding:20px;
+  padding:18px;
 
   font-family:
     "Plus Jakarta Sans",
     system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
     sans-serif;
 
   color:var(--text);
 
   background:
     radial-gradient(
-      600px 420px at 5% 0%,
-      rgba(65,130,255,.18),
+      600px 420px at 0% 0%,
+      rgba(70,125,255,.17),
       transparent 68%
     ),
     radial-gradient(
-      500px 380px at 100% 100%,
-      rgba(0,190,255,.11),
+      500px 400px at 100% 100%,
+      rgba(0,190,255,.10),
       transparent 68%
     ),
     #050609;
@@ -64,48 +67,43 @@ body{
 }
 
 /* =========================
-   MOVING LIQUID LIGHT
+   BACKGROUND LIQUID LIGHT
 ========================= */
 
 body::before,
 body::after{
   content:"";
-
   position:fixed;
-
   pointer-events:none;
-
   border-radius:50%;
-
-  filter:blur(35px);
-
+  filter:blur(45px);
   z-index:0;
 }
 
 body::before{
-  width:320px;
-  height:320px;
+  width:330px;
+  height:330px;
 
-  left:-150px;
-  top:-130px;
+  left:-170px;
+  top:-150px;
 
   background:
     radial-gradient(
       circle,
-      rgba(80,145,255,.20),
+      rgba(70,135,255,.22),
       transparent 68%
     );
 
   animation:
-    liquidOne 10s ease-in-out infinite;
+    liquidOne 11s ease-in-out infinite;
 }
 
 body::after{
-  width:340px;
-  height:340px;
+  width:360px;
+  height:360px;
 
-  right:-160px;
-  bottom:-150px;
+  right:-180px;
+  bottom:-170px;
 
   background:
     radial-gradient(
@@ -115,7 +113,7 @@ body::after{
     );
 
   animation:
-    liquidTwo 12s ease-in-out infinite;
+    liquidTwo 13s ease-in-out infinite;
 }
 
 @keyframes liquidOne{
@@ -128,7 +126,7 @@ body::after{
 
   50%{
     transform:
-      translate(150px,110px)
+      translate(145px,105px)
       scale(1.18);
   }
 }
@@ -149,7 +147,7 @@ body::after{
 }
 
 /* =========================
-   SHELL
+   MAIN
 ========================= */
 
 .shell{
@@ -160,16 +158,14 @@ body::after{
   z-index:2;
 }
 
-/* =========================
-   GLASS CARD
-========================= */
-
 .card{
   position:relative;
-
   overflow:hidden;
 
-  padding:28px 22px 22px;
+  padding:
+    25px
+    21px
+    20px;
 
   border-radius:30px;
 
@@ -177,10 +173,11 @@ body::after{
     linear-gradient(
       145deg,
       rgba(255,255,255,.095),
-      rgba(255,255,255,.032)
+      rgba(255,255,255,.028)
     );
 
-  border:1px solid var(--stroke);
+  border:
+    1px solid var(--stroke);
 
   backdrop-filter:
     blur(30px)
@@ -192,7 +189,7 @@ body::after{
 
   box-shadow:
     0 35px 90px rgba(0,0,0,.58),
-    inset 0 1px 0 rgba(255,255,255,.16),
+    inset 0 1px 0 rgba(255,255,255,.15),
     inset 0 -1px 0 rgba(255,255,255,.025);
 
   animation:
@@ -203,7 +200,6 @@ body::after{
 
   from{
     opacity:0;
-
     transform:
       translateY(18px)
       scale(.97);
@@ -211,7 +207,6 @@ body::after{
 
   to{
     opacity:1;
-
     transform:
       translateY(0)
       scale(1);
@@ -226,8 +221,7 @@ body::after{
   content:"";
 
   position:absolute;
-
-  inset:-40%;
+  inset:-45%;
 
   background:
     linear-gradient(
@@ -242,7 +236,7 @@ body::after{
     rotate(8deg);
 
   animation:
-    glassShine 7s ease-in-out infinite;
+    glassShine 8s ease-in-out infinite;
 
   pointer-events:none;
 }
@@ -263,69 +257,61 @@ body::after{
 }
 
 /* =========================
-   TOP
+   HEADER
 ========================= */
 
 .top{
   position:relative;
-
   z-index:1;
 
   display:flex;
-
   align-items:center;
-
   justify-content:space-between;
 
-  margin-bottom:20px;
+  margin-bottom:21px;
 }
 
 .icon{
-  width:46px;
-  height:46px;
+  width:47px;
+  height:47px;
 
   display:flex;
-
   align-items:center;
   justify-content:center;
 
   border-radius:15px;
 
-  font-size:21px;
+  font-size:20px;
 
   background:
     linear-gradient(
       145deg,
       rgba(80,145,255,.20),
-      rgba(255,255,255,.045)
+      rgba(255,255,255,.04)
     );
 
-  border:1px solid
-    rgba(105,160,255,.22);
+  border:
+    1px solid rgba(105,160,255,.23);
 
   box-shadow:
-    inset 0 1px 0
-      rgba(255,255,255,.12),
-
-    0 8px 28px
-      rgba(45,110,255,.12);
+    inset 0 1px 0 rgba(255,255,255,.13),
+    0 8px 28px rgba(45,110,255,.13);
 }
 
 .live{
   display:flex;
-
   align-items:center;
-
   gap:7px;
 
-  padding:7px 10px;
+  padding:
+    7px
+    11px;
 
   border-radius:999px;
 
   color:#a9caff;
 
   font-size:9px;
-
   font-weight:800;
 
   letter-spacing:.08em;
@@ -333,10 +319,10 @@ body::after{
   text-transform:uppercase;
 
   background:
-    rgba(59,130,246,.08);
+    rgba(59,130,246,.075);
 
-  border:1px solid
-    rgba(80,145,255,.18);
+  border:
+    1px solid rgba(80,145,255,.18);
 }
 
 .live-dot{
@@ -348,8 +334,7 @@ body::after{
   background:#61a1ff;
 
   box-shadow:
-    0 0 10px
-    rgba(80,150,255,.9);
+    0 0 10px rgba(80,150,255,.9);
 
   animation:
     pulse 1.8s ease-in-out infinite;
@@ -400,7 +385,7 @@ h1{
 }
 
 .sub b{
-  color:#dfeaff;
+  color:#e1eaff;
 }
 
 /* =========================
@@ -409,16 +394,17 @@ h1{
 
 .status-wrap{
   display:flex;
-
   align-items:center;
 
-  gap:8px;
+  gap:9px;
+
+  min-height:23px;
 
   margin-top:14px;
 
-  min-height:22px;
-
-  padding:0 2px;
+  padding:
+    0
+    2px;
 }
 
 .status-icon{
@@ -432,8 +418,7 @@ h1{
   background:#f7c948;
 
   box-shadow:
-    0 0 9px
-    rgba(247,201,72,.55);
+    0 0 9px rgba(247,201,72,.55);
 
   animation:
     pulse 1.8s infinite;
@@ -445,6 +430,8 @@ h1{
   font-size:11.5px;
 
   font-weight:600;
+
+  line-height:1.5;
 
   white-space:pre-line;
 
@@ -471,8 +458,7 @@ h1{
   padding-top:17px;
 
   border-top:
-    1px solid
-    rgba(255,255,255,.075);
+    1px solid rgba(255,255,255,.075);
 
   animation:
     resultIn .45s ease;
@@ -482,14 +468,12 @@ h1{
 
   from{
     opacity:0;
-
     transform:
       translateY(8px);
   }
 
   to{
     opacity:1;
-
     transform:
       translateY(0);
   }
@@ -497,7 +481,6 @@ h1{
 
 .label{
   display:flex;
-
   align-items:center;
 
   gap:7px;
@@ -526,18 +509,18 @@ h1{
   background:#638fff;
 
   box-shadow:
-    0 0 8px
-    rgba(70,130,255,.7);
+    0 0 8px rgba(70,130,255,.7);
 }
 
 .box{
   min-height:52px;
 
   display:flex;
-
   align-items:center;
 
-  padding:13px 14px;
+  padding:
+    13px
+    14px;
 
   border-radius:15px;
 
@@ -553,12 +536,10 @@ h1{
     rgba(255,255,255,.035);
 
   border:
-    1px solid
-    rgba(255,255,255,.08);
+    1px solid rgba(255,255,255,.08);
 
   box-shadow:
-    inset 0 1px 0
-      rgba(255,255,255,.045);
+    inset 0 1px 0 rgba(255,255,255,.045);
 }
 
 .box.key{
@@ -573,6 +554,9 @@ h1{
 
   border-color:
     rgba(55,220,125,.22);
+
+  text-shadow:
+    0 0 18px rgba(50,220,120,.12);
 }
 
 /* =========================
@@ -588,7 +572,9 @@ h1{
 
   border-radius:16px;
 
-  padding:15px 16px;
+  padding:
+    15px
+    16px;
 
   margin-top:10px;
 
@@ -598,7 +584,7 @@ h1{
 
   font-weight:800;
 
-  color:white;
+  color:#fff;
 
   cursor:pointer;
 
@@ -621,7 +607,7 @@ h1{
     linear-gradient(
       110deg,
       transparent 25%,
-      rgba(255,255,255,.16),
+      rgba(255,255,255,.17),
       transparent 75%
     );
 
@@ -650,14 +636,12 @@ h1{
     );
 
   box-shadow:
-    0 10px 28px
-      rgba(30,200,100,.20);
+    0 10px 28px rgba(30,200,100,.20);
 }
 
 .btn-copy:hover{
   box-shadow:
-    0 14px 35px
-      rgba(30,200,100,.32);
+    0 14px 35px rgba(30,200,100,.32);
 }
 
 /* =========================
@@ -666,7 +650,6 @@ h1{
 
 .foot{
   position:relative;
-
   z-index:1;
 
   margin-top:20px;
@@ -691,12 +674,14 @@ h1{
 @media(max-width:380px){
 
   body{
-    padding:14px;
+    padding:13px;
   }
 
   .card{
     padding:
-      24px 18px 19px;
+      23px
+      18px
+      19px;
 
     border-radius:26px;
   }
@@ -704,146 +689,163 @@ h1{
   h1{
     font-size:22px;
   }
+
+  .sub{
+    font-size:12.5px;
+  }
 }
-</style></head><body><div class="shell">  <div class="card"><div class="top">
+</style>
+</head>
 
-  <div class="icon">
-    🔑
-  </div>
+<body>
 
-  <div class="live">
+<div class="shell">
 
-    <span class="live-dot"></span>
+  <div class="card">
 
-    Secure Key
+    <div class="top">
+
+      <div class="icon">
+        🔑
+      </div>
+
+      <div class="live">
+
+        <span class="live-dot"></span>
+
+        Secure Key
+
+      </div>
+
+    </div>
+
+
+    <div class="content">
+
+      <h1>
+        Nhận Key Beta
+      </h1>
+
+      <p class="sub">
+        Key <b>dùng một lần</b> của bạn
+        sẽ được hiển thị sau khi xác nhận
+        liên kết thành công.
+      </p>
+
+
+      <div class="status-wrap">
+
+        <span
+          class="status-icon"
+          id="statusDot">
+        </span>
+
+        <div id="status">
+          Đang xác nhận liên kết...
+        </div>
+
+      </div>
+
+
+      <div id="result">
+
+        <div class="label">
+          Access Key
+        </div>
+
+        <div
+          class="box key"
+          id="outKey">
+          —
+        </div>
+
+
+        <button
+          class="btn btn-copy"
+          id="copyButton"
+          type="button">
+
+          Sao chép Key
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <p class="foot">
+
+      <span>
+        One-time Key System
+      </span>
+
+      · LoveMeizu
+
+    </p>
 
   </div>
 
 </div>
 
 
-<div class="content">
-
-  <h1>
-    Nhận Key Beta
-  </h1>
-
-  <p class="sub">
-    Key <b>dùng một lần</b> của bạn
-    sẽ được hiển thị sau khi xác nhận
-    liên kết thành công.
-  </p>
-
-
-  <div class="status-wrap">
-
-    <span
-      class="status-icon"
-      id="statusDot"
-    ></span>
-
-    <div id="status">
-      Đang xác nhận liên kết...
-    </div>
-
-  </div>
-
-
-  <div id="result">
-
-    <div class="label">
-      Access Key
-    </div>
-
-    <div
-      class="box key"
-      id="outKey"
-    >
-      —
-    </div>
-
-
-    <button
-      class="btn btn-copy"
-      id="copyButton"
-      type="button"
-    >
-      Sao chép Key
-    </button>
-
-  </div>
-
-</div>
-
-
-<p class="foot">
-
-  <span>
-    One-time Key System
-  </span>
-
-  · LoveMeizu
-
-</p>
-
-  </div></div><script>
+<script>
 
 const BACKEND_URL =
   "https://meizulover-key-backend.onrender.com";
 
+
+/* =========================
+   GET TOKEN
+========================= */
 
 const params =
   new URLSearchParams(
     window.location.search
   );
 
-
 const token =
-  params.get("token");
+  (
+    params.get("token") ||
+    params.get("t") ||
+    ""
+  ).trim();
 
+
+/* =========================
+   ELEMENTS
+========================= */
 
 const statusEl =
-  document.getElementById(
-    "status"
-  );
-
+  document.getElementById("status");
 
 const statusDot =
-  document.getElementById(
-    "statusDot"
-  );
-
+  document.getElementById("statusDot");
 
 const result =
-  document.getElementById(
-    "result"
-  );
-
+  document.getElementById("result");
 
 const outKey =
-  document.getElementById(
-    "outKey"
-  );
-
+  document.getElementById("outKey");
 
 const copyButton =
-  document.getElementById(
-    "copyButton"
-  );
+  document.getElementById("copyButton");
 
 
-function setStatus(
-  message,
-  type
-){
+/* =========================
+   STATUS
+========================= */
+
+function setStatus(message, type = "") {
 
   statusEl.textContent =
     message;
 
   statusEl.className =
-    type || "";
+    type;
 
-  if(type === "ok"){
+
+  if(type === "ok") {
 
     statusDot.style.background =
       "#39dc7b";
@@ -853,7 +855,7 @@ function setStatus(
 
   }
 
-  else if(type === "err"){
+  else if(type === "err") {
 
     statusDot.style.background =
       "#ff6868";
@@ -863,18 +865,156 @@ function setStatus(
 
   }
 
-  else{
+  else {
 
     statusDot.style.background =
       "#f7c948";
 
+    statusDot.style.boxShadow =
+      "0 0 9px rgba(247,201,72,.55)";
+
   }
+
 }
 
 
-async function loadKey(){
+/* =========================
+   API HELPER
+========================= */
 
-  if(!token){
+async function request(
+  endpoint,
+  body
+) {
+
+  const response =
+    await fetch(
+      BACKEND_URL + endpoint,
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":
+            "application/json"
+        },
+
+        body:
+          JSON.stringify(body)
+      }
+    );
+
+
+  let data;
+
+  try {
+
+    data =
+      await response.json();
+
+  }
+
+  catch {
+
+    throw new Error(
+      "SERVER_INVALID_RESPONSE"
+    );
+
+  }
+
+
+  if(!response.ok) {
+
+    throw new Error(
+      data.error ||
+      "SERVER_ERROR"
+    );
+
+  }
+
+
+  return data;
+
+}
+
+
+/* =========================
+   CLAIM ERROR
+========================= */
+
+function showClaimError(error) {
+
+  switch(error) {
+
+    case "LINK4M_NOT_COMPLETED":
+
+      setStatus(
+        "Bạn chưa hoàn thành Link4M.\nHãy hoàn thành liên kết rồi quay lại trang này.",
+        "err"
+      );
+
+      break;
+
+
+    case "KEY_ALREADY_CLAIMED":
+
+      setStatus(
+        "Key này đã được nhận trước đó.",
+        "err"
+      );
+
+      break;
+
+
+    case "KEY_USED":
+
+      setStatus(
+        "Key này đã được sử dụng.",
+        "err"
+      );
+
+      break;
+
+
+    case "INVALID_TOKEN":
+
+      setStatus(
+        "Token không hợp lệ hoặc đã hết hạn.",
+        "err"
+      );
+
+      break;
+
+
+    case "KEY_NOT_FOUND":
+
+      setStatus(
+        "Không tìm thấy Key tương ứng.",
+        "err"
+      );
+
+      break;
+
+
+    default:
+
+      setStatus(
+        error ||
+        "Không thể nhận Key.",
+        "err"
+      );
+
+  }
+
+}
+
+
+/* =========================
+   LOAD KEY
+========================= */
+
+async function loadKey() {
+
+  if(!token) {
 
     setStatus(
       "Liên kết không hợp lệ hoặc thiếu token.",
@@ -882,61 +1022,43 @@ async function loadKey(){
     );
 
     return;
+
   }
 
 
-  try{
+  try {
 
     setStatus(
-      "Đang xác nhận liên kết...",
-      ""
+      "Đang xác nhận liên kết..."
     );
 
 
-    const infoResponse =
-      await fetch(
-        BACKEND_URL +
+    const info =
+      await request(
         "/session-info",
         {
-          method:"POST",
-
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
-
-          body:
-            JSON.stringify({
-              token:token
-            })
+          token:token
         }
       );
 
 
-    if(!infoResponse.ok){
-
-      throw new Error(
-        "BACKEND_ERROR"
-      );
-    }
-
-
-    const info =
-      await infoResponse.json();
-
-
-    if(!info.success){
+    if(
+      !info ||
+      info.success !== true
+    ) {
 
       setStatus(
+        info?.error ||
         "Token không hợp lệ.",
         "err"
       );
 
       return;
+
     }
 
 
-    if(info.used === true){
+    if(info.used === true) {
 
       setStatus(
         "Key này đã được sử dụng.",
@@ -944,75 +1066,66 @@ async function loadKey(){
       );
 
       return;
+
+    }
+
+
+    if(
+      info.link4m_verified !== true
+    ) {
+
+      setStatus(
+        "Bạn chưa hoàn thành Link4M.\nHãy hoàn thành liên kết rồi quay lại trang này.",
+        "err"
+      );
+
+      return;
+
     }
 
 
     setStatus(
-      "Đang lấy Key...",
-      ""
+      "Link4M đã được xác nhận.\nĐang cấp Key..."
     );
 
 
-    const claimResponse =
-      await fetch(
-        BACKEND_URL +
+    const data =
+      await request(
         "/claim",
         {
-          method:"POST",
-
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
-
-          body:
-            JSON.stringify({
-              token:token
-            })
+          token:token
         }
       );
 
 
-    if(!claimResponse.ok){
+    if(
+      !data ||
+      data.success !== true
+    ) {
 
-      throw new Error(
-        "CLAIM_ERROR"
+      showClaimError(
+        data?.error
       );
+
+      return;
+
     }
 
 
-    const data =
-      await claimResponse.json();
+    if(!data.key) {
 
-
-    if(!data.success){
-
-      if(
-        data.error ===
-        "KEY_USED"
-      ){
-
-        setStatus(
-          "Key này đã được sử dụng.",
-          "err"
-        );
-
-      }else{
-
-        setStatus(
-          "Không thể nhận Key.",
-          "err"
-        );
-
-      }
+      setStatus(
+        "Máy chủ không trả về Key.",
+        "err"
+      );
 
       return;
+
     }
 
 
     outKey.textContent =
       data.key;
-
 
     result.style.display =
       "block";
@@ -1024,20 +1137,29 @@ async function loadKey(){
     );
 
 
-    /*
-      Giữ nguyên chức năng cũ:
-      sau khi nhận Key thành công,
-      token được xoá khỏi URL.
-    */
+    try {
 
-    window.history.replaceState(
-      {},
-      document.title,
-      window.location.pathname
-    );
+      window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname
+      );
+
+    }
+
+    catch(error) {
+
+      console.warn(
+        "Cannot clean URL:",
+        error
+      );
+
+    }
 
 
-  }catch(error){
+  }
+
+  catch(error) {
 
     console.error(
       "GET KEY ERROR:",
@@ -1045,18 +1167,68 @@ async function loadKey(){
     );
 
 
+    if(
+      error.message ===
+      "LINK4M_NOT_COMPLETED"
+    ) {
+
+      setStatus(
+        "Bạn chưa hoàn thành Link4M.",
+        "err"
+      );
+
+      return;
+
+    }
+
+
+    if(
+      error.message ===
+      "KEY_ALREADY_CLAIMED"
+    ) {
+
+      setStatus(
+        "Key này đã được nhận trước đó.",
+        "err"
+      );
+
+      return;
+
+    }
+
+
+    if(
+      error.message ===
+      "KEY_USED"
+    ) {
+
+      setStatus(
+        "Key này đã được sử dụng.",
+        "err"
+      );
+
+      return;
+
+    }
+
+
     setStatus(
-      "Không thể kết nối máy chủ.",
+      "Không thể kết nối máy chủ.\nVui lòng thử lại sau.",
       "err"
     );
 
   }
+
 }
 
 
+/* =========================
+   COPY KEY
+========================= */
+
 copyButton.addEventListener(
   "click",
-  async function(){
+  async function() {
 
     const key =
       outKey.textContent.trim();
@@ -1065,16 +1237,18 @@ copyButton.addEventListener(
     if(
       !key ||
       key === "—"
-    ){
+    ) {
 
       return;
+
     }
 
 
-    try{
+    try {
 
-      await navigator.clipboard
-        .writeText(key);
+      await navigator.clipboard.writeText(
+        key
+      );
 
 
       const oldText =
@@ -1092,7 +1266,7 @@ copyButton.addEventListener(
 
 
       setTimeout(
-        function(){
+        function() {
 
           copyButton.textContent =
             oldText;
@@ -1102,12 +1276,80 @@ copyButton.addEventListener(
       );
 
 
-    }catch(error){
+    }
 
-      setStatus(
-        "Không thể tự sao chép. Hãy nhấn giữ Key.",
-        "err"
-      );
+    catch(error) {
+
+      try {
+
+        const textarea =
+          document.createElement(
+            "textarea"
+          );
+
+
+        textarea.value =
+          key;
+
+        textarea.style.position =
+          "fixed";
+
+        textarea.style.opacity =
+          "0";
+
+
+        document.body.appendChild(
+          textarea
+        );
+
+
+        textarea.focus();
+
+        textarea.select();
+
+
+        document.execCommand(
+          "copy"
+        );
+
+
+        textarea.remove();
+
+
+        const oldText =
+          copyButton.textContent;
+
+
+        copyButton.textContent =
+          "✓ Đã sao chép Key";
+
+
+        setStatus(
+          "Key đã được sao chép!",
+          "ok"
+        );
+
+
+        setTimeout(
+          function() {
+
+            copyButton.textContent =
+              oldText;
+
+          },
+          1800
+        );
+
+      }
+
+      catch(fallbackError) {
+
+        setStatus(
+          "Không thể tự sao chép. Hãy nhấn giữ Key để sao chép.",
+          "err"
+        );
+
+      }
 
     }
 
@@ -1115,7 +1357,13 @@ copyButton.addEventListener(
 );
 
 
+/* =========================
+   START
+========================= */
+
 loadKey();
 
-</script></body>
+</script>
+
+</body>
 </html>
