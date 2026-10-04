@@ -37,7 +37,6 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-
   padding:18px;
 
   font-family:
@@ -67,7 +66,7 @@ body{
 }
 
 /* =========================
-   BACKGROUND LIQUID LIGHT
+   BACKGROUND
 ========================= */
 
 body::before,
@@ -83,7 +82,6 @@ body::after{
 body::before{
   width:330px;
   height:330px;
-
   left:-170px;
   top:-150px;
 
@@ -94,14 +92,12 @@ body::before{
       transparent 68%
     );
 
-  animation:
-    liquidOne 11s ease-in-out infinite;
+  animation:liquidOne 11s ease-in-out infinite;
 }
 
 body::after{
   width:360px;
   height:360px;
-
   right:-180px;
   bottom:-170px;
 
@@ -112,37 +108,26 @@ body::after{
       transparent 68%
     );
 
-  animation:
-    liquidTwo 13s ease-in-out infinite;
+  animation:liquidTwo 13s ease-in-out infinite;
 }
 
 @keyframes liquidOne{
-
   0%,100%{
-    transform:
-      translate(0,0)
-      scale(1);
+    transform:translate(0,0) scale(1);
   }
 
   50%{
-    transform:
-      translate(145px,105px)
-      scale(1.18);
+    transform:translate(145px,105px) scale(1.18);
   }
 }
 
 @keyframes liquidTwo{
-
   0%,100%{
-    transform:
-      translate(0,0)
-      scale(1);
+    transform:translate(0,0) scale(1);
   }
 
   50%{
-    transform:
-      translate(-130px,-100px)
-      scale(1.15);
+    transform:translate(-130px,-100px) scale(1.15);
   }
 }
 
@@ -153,7 +138,6 @@ body::after{
 .shell{
   width:100%;
   max-width:430px;
-
   position:relative;
   z-index:2;
 }
@@ -162,10 +146,7 @@ body::after{
   position:relative;
   overflow:hidden;
 
-  padding:
-    25px
-    21px
-    20px;
+  padding:25px 21px 20px;
 
   border-radius:30px;
 
@@ -176,8 +157,7 @@ body::after{
       rgba(255,255,255,.028)
     );
 
-  border:
-    1px solid var(--stroke);
+  border:1px solid var(--stroke);
 
   backdrop-filter:
     blur(30px)
@@ -197,24 +177,19 @@ body::after{
 }
 
 @keyframes cardIn{
-
   from{
     opacity:0;
-    transform:
-      translateY(18px)
-      scale(.97);
+    transform:translateY(18px) scale(.97);
   }
 
   to{
     opacity:1;
-    transform:
-      translateY(0)
-      scale(1);
+    transform:translateY(0) scale(1);
   }
 }
 
 /* =========================
-   GLASS REFLECTION
+   GLASS
 ========================= */
 
 .card::before{
@@ -242,7 +217,6 @@ body::after{
 }
 
 @keyframes glassShine{
-
   0%,45%{
     transform:
       translateX(-65%)
@@ -290,8 +264,7 @@ body::after{
       rgba(255,255,255,.04)
     );
 
-  border:
-    1px solid rgba(105,160,255,.23);
+  border:1px solid rgba(105,160,255,.23);
 
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.13),
@@ -303,9 +276,7 @@ body::after{
   align-items:center;
   gap:7px;
 
-  padding:
-    7px
-    11px;
+  padding:7px 11px;
 
   border-radius:999px;
 
@@ -315,14 +286,11 @@ body::after{
   font-weight:800;
 
   letter-spacing:.08em;
-
   text-transform:uppercase;
 
-  background:
-    rgba(59,130,246,.075);
+  background:rgba(59,130,246,.075);
 
-  border:
-    1px solid rgba(80,145,255,.18);
+  border:1px solid rgba(80,145,255,.18);
 }
 
 .live-dot{
@@ -336,12 +304,10 @@ body::after{
   box-shadow:
     0 0 10px rgba(80,150,255,.9);
 
-  animation:
-    pulse 1.8s ease-in-out infinite;
+  animation:pulse 1.8s ease-in-out infinite;
 }
 
 @keyframes pulse{
-
   0%,100%{
     opacity:.45;
     transform:scale(.8);
@@ -364,23 +330,16 @@ body::after{
 
 h1{
   font-size:25px;
-
   line-height:1.15;
-
   font-weight:800;
-
   letter-spacing:-.045em;
-
   margin-bottom:9px;
 }
 
 .sub{
   color:var(--muted);
-
   font-size:13px;
-
   line-height:1.65;
-
   margin-bottom:22px;
 }
 
@@ -395,16 +354,12 @@ h1{
 .status-wrap{
   display:flex;
   align-items:center;
-
   gap:9px;
 
   min-height:23px;
 
   margin-top:14px;
-
-  padding:
-    0
-    2px;
+  padding:0 2px;
 }
 
 .status-icon{
@@ -420,21 +375,17 @@ h1{
   box-shadow:
     0 0 9px rgba(247,201,72,.55);
 
-  animation:
-    pulse 1.8s infinite;
+  animation:pulse 1.8s infinite;
 }
 
 #status{
   color:#c7c8ce;
 
   font-size:11.5px;
-
   font-weight:600;
-
   line-height:1.5;
 
   white-space:pre-line;
-
   word-break:break-word;
 }
 
@@ -454,35 +405,29 @@ h1{
   display:none;
 
   margin-top:18px;
-
   padding-top:17px;
 
   border-top:
     1px solid rgba(255,255,255,.075);
 
-  animation:
-    resultIn .45s ease;
+  animation:resultIn .45s ease;
 }
 
 @keyframes resultIn{
-
   from{
     opacity:0;
-    transform:
-      translateY(8px);
+    transform:translateY(8px);
   }
 
   to{
     opacity:1;
-    transform:
-      translateY(0);
+    transform:translateY(0);
   }
 }
 
 .label{
   display:flex;
   align-items:center;
-
   gap:7px;
 
   margin-bottom:8px;
@@ -490,11 +435,9 @@ h1{
   color:#858894;
 
   font-size:9px;
-
   font-weight:800;
 
   letter-spacing:.09em;
-
   text-transform:uppercase;
 }
 
@@ -518,16 +461,12 @@ h1{
   display:flex;
   align-items:center;
 
-  padding:
-    13px
-    14px;
+  padding:13px 14px;
 
   border-radius:15px;
 
   font-size:12px;
-
   font-weight:700;
-
   line-height:1.5;
 
   word-break:break-all;
@@ -569,25 +508,19 @@ h1{
   width:100%;
 
   border:0;
-
   border-radius:16px;
 
-  padding:
-    15px
-    16px;
-
+  padding:15px 16px;
   margin-top:10px;
 
   font-family:inherit;
 
   font-size:13.5px;
-
   font-weight:800;
 
   color:#fff;
 
   cursor:pointer;
-
   overflow:hidden;
 
   transition:
@@ -600,7 +533,6 @@ h1{
   content:"";
 
   position:absolute;
-
   inset:0;
 
   background:
@@ -611,16 +543,14 @@ h1{
       transparent 75%
     );
 
-  transform:
-    translateX(-100%);
+  transform:translateX(-100%);
 
   transition:
     transform .55s ease;
 }
 
 .btn:hover::before{
-  transform:
-    translateX(100%);
+  transform:translateX(100%);
 }
 
 .btn:active{
@@ -659,7 +589,6 @@ h1{
   text-align:center;
 
   font-size:10px;
-
   line-height:1.5;
 }
 
@@ -678,11 +607,7 @@ h1{
   }
 
   .card{
-    padding:
-      23px
-      18px
-      19px;
-
+    padding:23px 18px 19px;
     border-radius:26px;
   }
 
@@ -693,6 +618,7 @@ h1{
   .sub{
     font-size:12.5px;
   }
+
 }
 </style>
 </head>
@@ -719,7 +645,6 @@ h1{
 
     </div>
 
-
     <div class="content">
 
       <h1>
@@ -731,7 +656,6 @@ h1{
         sẽ được hiển thị sau khi xác nhận
         liên kết thành công.
       </p>
-
 
       <div class="status-wrap">
 
@@ -746,7 +670,6 @@ h1{
 
       </div>
 
-
       <div id="result">
 
         <div class="label">
@@ -758,7 +681,6 @@ h1{
           id="outKey">
           —
         </div>
-
 
         <button
           class="btn btn-copy"
@@ -772,7 +694,6 @@ h1{
       </div>
 
     </div>
-
 
     <p class="foot">
 
@@ -790,9 +711,16 @@ h1{
 
 
 <script>
+"use strict";
+
+/* =========================
+   CONFIG
+========================= */
 
 const BACKEND_URL =
   "https://meizulover-key-backend.onrender.com";
+
+const REQUEST_TIMEOUT = 15000;
 
 
 /* =========================
@@ -833,19 +761,30 @@ const copyButton =
 
 
 /* =========================
+   STATE
+========================= */
+
+let claiming = false;
+let claimedKey = null;
+
+
+/* =========================
    STATUS
 ========================= */
 
-function setStatus(message, type = "") {
+function setStatus(
+  message,
+  type = ""
+) {
 
   statusEl.textContent =
-    message;
+    String(message || "");
 
   statusEl.className =
     type;
 
 
-  if(type === "ok") {
+  if (type === "ok") {
 
     statusDot.style.background =
       "#39dc7b";
@@ -855,7 +794,7 @@ function setStatus(message, type = "") {
 
   }
 
-  else if(type === "err") {
+  else if (type === "err") {
 
     statusDot.style.background =
       "#ff6868";
@@ -879,7 +818,22 @@ function setStatus(message, type = "") {
 
 
 /* =========================
-   API HELPER
+   HIDE RESULT
+========================= */
+
+function hideResult() {
+
+  result.style.display =
+    "none";
+
+  outKey.textContent =
+    "—";
+
+}
+
+
+/* =========================
+   API REQUEST
 ========================= */
 
 async function request(
@@ -887,52 +841,109 @@ async function request(
   body
 ) {
 
-  const response =
-    await fetch(
-      BACKEND_URL + endpoint,
-      {
-        method:"POST",
+  const controller =
+    new AbortController();
 
-        headers:{
-          "Content-Type":
-            "application/json"
-        },
+  const timeout =
+    setTimeout(
+      function () {
 
-        body:
-          JSON.stringify(body)
-      }
+        controller.abort();
+
+      },
+      REQUEST_TIMEOUT
     );
 
-
-  let data;
 
   try {
 
-    data =
-      await response.json();
+    const response =
+      await fetch(
+        BACKEND_URL + endpoint,
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json",
+
+            "Accept":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify(body),
+
+          cache:
+            "no-store",
+
+          signal:
+            controller.signal
+        }
+      );
+
+
+    const text =
+      await response.text();
+
+
+    let data = null;
+
+
+    try {
+
+      data =
+        text
+          ? JSON.parse(text)
+          : null;
+
+    }
+
+    catch (_) {
+
+      throw new Error(
+        "SERVER_INVALID_RESPONSE"
+      );
+
+    }
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        data?.error ||
+        "SERVER_ERROR"
+      );
+
+    }
+
+
+    return data;
 
   }
 
-  catch {
+  catch (error) {
 
-    throw new Error(
-      "SERVER_INVALID_RESPONSE"
-    );
+    if (
+      error?.name ===
+      "AbortError"
+    ) {
+
+      throw new Error(
+        "REQUEST_TIMEOUT"
+      );
+
+    }
+
+    throw error;
 
   }
 
+  finally {
 
-  if(!response.ok) {
-
-    throw new Error(
-      data.error ||
-      "SERVER_ERROR"
-    );
+    clearTimeout(timeout);
 
   }
-
-
-  return data;
 
 }
 
@@ -943,7 +954,9 @@ async function request(
 
 function showClaimError(error) {
 
-  switch(error) {
+  switch (
+    String(error || "")
+  ) {
 
     case "LINK4M_NOT_COMPLETED":
 
@@ -995,11 +1008,40 @@ function showClaimError(error) {
       break;
 
 
+    case "MISSING_TOKEN":
+
+      setStatus(
+        "Liên kết không hợp lệ hoặc thiếu token.",
+        "err"
+      );
+
+      break;
+
+
+    case "REQUEST_TIMEOUT":
+
+      setStatus(
+        "Máy chủ phản hồi quá lâu.\nVui lòng thử lại.",
+        "err"
+      );
+
+      break;
+
+
+    case "SERVER_INVALID_RESPONSE":
+
+      setStatus(
+        "Máy chủ trả về dữ liệu không hợp lệ.",
+        "err"
+      );
+
+      break;
+
+
     default:
 
       setStatus(
-        error ||
-        "Không thể nhận Key.",
+        "Không thể nhận Key.\nVui lòng thử lại sau.",
         "err"
       );
 
@@ -1014,7 +1056,14 @@ function showClaimError(error) {
 
 async function loadKey() {
 
-  if(!token) {
+  if (claiming) {
+    return;
+  }
+
+
+  if (!token) {
+
+    hideResult();
 
     setStatus(
       "Liên kết không hợp lệ hoặc thiếu token.",
@@ -1026,12 +1075,29 @@ async function loadKey() {
   }
 
 
+  if (claimedKey) {
+    return;
+  }
+
+
+  claiming = true;
+
+  hideResult();
+
+
   try {
 
     setStatus(
       "Đang xác nhận liên kết..."
     );
 
+
+    /*
+     * Chỉ đọc trạng thái session.
+     *
+     * Không tin frontend để xác nhận
+     * Link4M.
+     */
 
     const info =
       await request(
@@ -1042,15 +1108,14 @@ async function loadKey() {
       );
 
 
-    if(
+    if (
       !info ||
       info.success !== true
     ) {
 
-      setStatus(
+      showClaimError(
         info?.error ||
-        "Token không hợp lệ.",
-        "err"
+        "INVALID_TOKEN"
       );
 
       return;
@@ -1058,7 +1123,9 @@ async function loadKey() {
     }
 
 
-    if(info.used === true) {
+    if (
+      info.used === true
+    ) {
 
       setStatus(
         "Key này đã được sử dụng.",
@@ -1070,22 +1137,21 @@ async function loadKey() {
     }
 
 
-    if(
-      info.link4m_verified !== true
-    ) {
-
-      setStatus(
-        "Bạn chưa hoàn thành Link4M.\nHãy hoàn thành liên kết rồi quay lại trang này.",
-        "err"
-      );
-
-      return;
-
-    }
+    /*
+     * Không tự đặt:
+     *
+     * link4m_verified = true
+     *
+     * Không gửi:
+     *
+     * verified:true
+     *
+     * Backend sẽ tự quyết định.
+     */
 
 
     setStatus(
-      "Link4M đã được xác nhận.\nĐang cấp Key..."
+      "Đang xác nhận điều kiện...\nVui lòng chờ..."
     );
 
 
@@ -1098,7 +1164,7 @@ async function loadKey() {
       );
 
 
-    if(
+    if (
       !data ||
       data.success !== true
     ) {
@@ -1112,10 +1178,18 @@ async function loadKey() {
     }
 
 
-    if(!data.key) {
+    /*
+     * Chỉ hiển thị Key khi backend
+     * thực sự trả về success + key.
+     */
+
+    if (
+      typeof data.key !== "string" ||
+      !data.key.trim()
+    ) {
 
       setStatus(
-        "Máy chủ không trả về Key.",
+        "Máy chủ không trả về Key hợp lệ.",
         "err"
       );
 
@@ -1124,8 +1198,16 @@ async function loadKey() {
     }
 
 
+    const key =
+      data.key.trim();
+
+
+    claimedKey =
+      key;
+
+
     outKey.textContent =
-      data.key;
+      key;
 
     result.style.display =
       "block";
@@ -1137,6 +1219,11 @@ async function loadKey() {
     );
 
 
+    /*
+     * Xóa token khỏi URL sau khi
+     * claim thành công.
+     */
+
     try {
 
       window.history.replaceState(
@@ -1147,7 +1234,7 @@ async function loadKey() {
 
     }
 
-    catch(error) {
+    catch (error) {
 
       console.warn(
         "Cannot clean URL:",
@@ -1159,7 +1246,7 @@ async function loadKey() {
 
   }
 
-  catch(error) {
+  catch (error) {
 
     console.error(
       "GET KEY ERROR:",
@@ -1167,55 +1254,15 @@ async function loadKey() {
     );
 
 
-    if(
-      error.message ===
-      "LINK4M_NOT_COMPLETED"
-    ) {
-
-      setStatus(
-        "Bạn chưa hoàn thành Link4M.",
-        "err"
-      );
-
-      return;
-
-    }
-
-
-    if(
-      error.message ===
-      "KEY_ALREADY_CLAIMED"
-    ) {
-
-      setStatus(
-        "Key này đã được nhận trước đó.",
-        "err"
-      );
-
-      return;
-
-    }
-
-
-    if(
-      error.message ===
-      "KEY_USED"
-    ) {
-
-      setStatus(
-        "Key này đã được sử dụng.",
-        "err"
-      );
-
-      return;
-
-    }
-
-
-    setStatus(
-      "Không thể kết nối máy chủ.\nVui lòng thử lại sau.",
-      "err"
+    showClaimError(
+      error?.message
     );
+
+  }
+
+  finally {
+
+    claiming = false;
 
   }
 
@@ -1226,29 +1273,130 @@ async function loadKey() {
    COPY KEY
 ========================= */
 
-copyButton.addEventListener(
-  "click",
-  async function() {
+async function copyKey() {
 
-    const key =
-      outKey.textContent.trim();
+  const key =
+    outKey.textContent.trim();
 
 
-    if(
-      !key ||
-      key === "—"
+  if (
+    !key ||
+    key === "—"
+  ) {
+
+    return;
+
+  }
+
+
+  try {
+
+    if (
+      navigator.clipboard &&
+      window.isSecureContext
     ) {
-
-      return;
-
-    }
-
-
-    try {
 
       await navigator.clipboard.writeText(
         key
       );
+
+    }
+
+    else {
+
+      throw new Error(
+        "CLIPBOARD_UNAVAILABLE"
+      );
+
+    }
+
+
+    const oldText =
+      copyButton.textContent;
+
+
+    copyButton.textContent =
+      "✓ Đã sao chép Key";
+
+
+    setStatus(
+      "Key đã được sao chép!",
+      "ok"
+    );
+
+
+    setTimeout(
+      function () {
+
+        copyButton.textContent =
+          oldText;
+
+      },
+      1800
+    );
+
+
+  }
+
+  catch (error) {
+
+    try {
+
+      const textarea =
+        document.createElement(
+          "textarea"
+        );
+
+
+      textarea.value =
+        key;
+
+
+      textarea.setAttribute(
+        "readonly",
+        ""
+      );
+
+
+      textarea.style.position =
+        "fixed";
+
+      textarea.style.left =
+        "-9999px";
+
+      textarea.style.top =
+        "0";
+
+      textarea.style.opacity =
+        "0";
+
+
+      document.body.appendChild(
+        textarea
+      );
+
+
+      textarea.focus();
+
+      textarea.select();
+
+
+      const copied =
+        document.execCommand(
+          "copy"
+        );
+
+
+      textarea.remove();
+
+
+      if (!copied) {
+
+        throw new Error(
+          "COPY_FAILED"
+        );
+
+      }
 
 
       const oldText =
@@ -1266,7 +1414,7 @@ copyButton.addEventListener(
 
 
       setTimeout(
-        function() {
+        function () {
 
           copyButton.textContent =
             oldText;
@@ -1275,83 +1423,37 @@ copyButton.addEventListener(
         1800
       );
 
+    }
+
+    catch (fallbackError) {
+
+      console.warn(
+        "COPY ERROR:",
+        fallbackError
+      );
+
+
+      setStatus(
+        "Không thể tự sao chép.\nHãy nhấn giữ Key để sao chép.",
+        "err"
+      );
 
     }
 
-    catch(error) {
+  }
 
-      try {
-
-        const textarea =
-          document.createElement(
-            "textarea"
-          );
+}
 
 
-        textarea.value =
-          key;
+/* =========================
+   COPY BUTTON
+========================= */
 
-        textarea.style.position =
-          "fixed";
+copyButton.addEventListener(
+  "click",
+  function () {
 
-        textarea.style.opacity =
-          "0";
-
-
-        document.body.appendChild(
-          textarea
-        );
-
-
-        textarea.focus();
-
-        textarea.select();
-
-
-        document.execCommand(
-          "copy"
-        );
-
-
-        textarea.remove();
-
-
-        const oldText =
-          copyButton.textContent;
-
-
-        copyButton.textContent =
-          "✓ Đã sao chép Key";
-
-
-        setStatus(
-          "Key đã được sao chép!",
-          "ok"
-        );
-
-
-        setTimeout(
-          function() {
-
-            copyButton.textContent =
-              oldText;
-
-          },
-          1800
-        );
-
-      }
-
-      catch(fallbackError) {
-
-        setStatus(
-          "Không thể tự sao chép. Hãy nhấn giữ Key để sao chép.",
-          "err"
-        );
-
-      }
-
-    }
+    copyKey();
 
   }
 );
