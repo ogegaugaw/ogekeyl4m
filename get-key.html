@@ -709,7 +709,6 @@ h1{
 
 </div>
 
-
 <script>
 "use strict";
 
@@ -847,9 +846,7 @@ async function request(
   const timeout =
     setTimeout(
       function () {
-
         controller.abort();
-
       },
       REQUEST_TIMEOUT
     );
@@ -901,6 +898,11 @@ async function request(
 
     catch (_) {
 
+      console.error(
+        "SERVER RAW RESPONSE:",
+        text
+      );
+
       throw new Error(
         "SERVER_INVALID_RESPONSE"
       );
@@ -908,12 +910,26 @@ async function request(
     }
 
 
+    /*
+     * QUAN TRỌNG:
+     * Không bỏ mất error code do backend trả về.
+     */
+
     if (!response.ok) {
 
-      throw new Error(
-        data?.error ||
-        "SERVER_ERROR"
-      );
+      const error =
+        new Error(
+          data?.error ||
+          "SERVER_ERROR"
+        );
+
+      error.status =
+        response.status;
+
+      error.data =
+        data;
+
+      throw error;
 
     }
 
@@ -954,14 +970,34 @@ async function request(
 
 function showClaimError(error) {
 
-  switch (
-    String(error || "")
-  ) {
+  const code =
+    String(
+      error || ""
+    ).trim();
 
-    case "LINK4M_NOT_COMPLETED":
+
+  console.error(
+    "CLAIM ERROR CODE:",
+    code
+  );
+
+
+  switch (code) {
+
+    case "TOKEN_NOT_FOUND":
 
       setStatus(
-        "Bạn chưa hoàn thành Link4M.\nHãy hoàn thành liên kết rồi quay lại trang này.",
+        "Không tìm thấy token.\nLiên kết có thể không còn hợp lệ.",
+        "err"
+      );
+
+      break;
+
+
+    case "TOKEN_EXPIRED":
+
+      setStatus(
+        "Liên kết đã hết hạn.\nVui lòng tạo Key mới.",
         "err"
       );
 
@@ -988,16 +1024,6 @@ function showClaimError(error) {
       break;
 
 
-    case "INVALID_TOKEN":
-
-      setStatus(
-        "Token không hợp lệ hoặc đã hết hạn.",
-        "err"
-      );
-
-      break;
-
-
     case "KEY_NOT_FOUND":
 
       setStatus(
@@ -1008,10 +1034,40 @@ function showClaimError(error) {
       break;
 
 
+    case "INVALID_TOKEN":
+
+      setStatus(
+        "Token không hợp lệ.",
+        "err"
+      );
+
+      break;
+
+
     case "MISSING_TOKEN":
 
       setStatus(
         "Liên kết không hợp lệ hoặc thiếu token.",
+        "err"
+      );
+
+      break;
+
+
+    case "CLAIM_FAILED":
+
+      setStatus(
+        "Backend không thể xác nhận Key.\nVui lòng thử lại.",
+        "err"
+      );
+
+      break;
+
+
+    case "RATE_LIMITED":
+
+      setStatus(
+        "Bạn thao tác quá nhanh.\nVui lòng chờ một chút.",
         "err"
       );
 
@@ -1038,10 +1094,31 @@ function showClaimError(error) {
       break;
 
 
+    case "SERVER_ERROR":
+
+      setStatus(
+        "Máy chủ đang gặp lỗi.\nVui lòng thử lại sau.",
+        "err"
+      );
+
+      break;
+
+
+    case "Failed to fetch":
+
+      setStatus(
+        "Không kết nối được máy chủ.\nVui lòng thử lại.",
+        "err"
+      );
+
+      break;
+
+
     default:
 
       setStatus(
-        "Không thể nhận Key.\nVui lòng thử lại sau.",
+        "Lỗi: " +
+        (code || "UNKNOWN_ERROR"),
         "err"
       );
 
@@ -1092,12 +1169,9 @@ async function loadKey() {
     );
 
 
-    /*
-     * Chỉ đọc trạng thái session.
-     *
-     * Không tin frontend để xác nhận
-     * Link4M.
-     */
+    /* -----------------------------------------
+       SESSION INFO
+    ----------------------------------------- */
 
     const info =
       await request(
@@ -1137,18 +1211,9 @@ async function loadKey() {
     }
 
 
-    /*
-     * Không tự đặt:
-     *
-     * link4m_verified = true
-     *
-     * Không gửi:
-     *
-     * verified:true
-     *
-     * Backend sẽ tự quyết định.
-     */
-
+    /* -----------------------------------------
+       CLAIM
+    ----------------------------------------- */
 
     setStatus(
       "Đang xác nhận điều kiện...\nVui lòng chờ..."
@@ -1178,10 +1243,9 @@ async function loadKey() {
     }
 
 
-    /*
-     * Chỉ hiển thị Key khi backend
-     * thực sự trả về success + key.
-     */
+    /* -----------------------------------------
+       VALIDATE KEY
+    ----------------------------------------- */
 
     if (
       typeof data.key !== "string" ||
@@ -1219,10 +1283,9 @@ async function loadKey() {
     );
 
 
-    /*
-     * Xóa token khỏi URL sau khi
-     * claim thành công.
-     */
+    /* -----------------------------------------
+       REMOVE TOKEN FROM URL
+    ----------------------------------------- */
 
     try {
 
@@ -1253,6 +1316,11 @@ async function loadKey() {
       error
     );
 
+
+    /*
+     * error.message chính là mã lỗi
+     * backend trả về.
+     */
 
     showClaimError(
       error?.message
@@ -1452,9 +1520,7 @@ async function copyKey() {
 copyButton.addEventListener(
   "click",
   function () {
-
     copyKey();
-
   }
 );
 
